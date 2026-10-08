@@ -1,0 +1,25 @@
+Nov  4 08:55:01 ubuntu-pc kernel: [  1.001300] Linux version 6.8.0-45-generic (buildd@lcy02-amd64-103) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.2.0-23ubuntu4) 13.2.0) #45-Ubuntu SMP PREEMPT_DYNAMIC
+Nov  4 08:55:01 ubuntu-pc kernel: [  1.002600] Command line: BOOT_IMAGE=/boot/vmlinuz-6.8.0-45-generic root=UUID=3f5a9c1e-7b2d-4e8a-9c01-5d6e7f8a9b0c ro quiet splash
+Nov  4 08:55:02 ubuntu-pc kernel: [  2.003900] BIOS-provided physical RAM map:
+Nov  4 08:55:03 ubuntu-pc kernel: [  3.005200] e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+Nov  4 08:55:03 ubuntu-pc kernel: [  3.006500] EXT4-fs (sda2): mounted filesystem 3f5a9c1e-7b2d-4e8a-9c01-5d6e7f8a9b0c ro with ordered data mode. Quota mode: none.
+Nov  4 08:55:04 ubuntu-pc kernel: [  4.007800] usb 1-1: new high-speed USB device number 2 using ehci-pci
+Nov  4 08:55:04 ubuntu-pc kernel: [  4.009100] usb 1-1: New USB device found, idVendor=0781, idProduct=5567, bcdDevice= 1.27
+Nov  4 08:55:04 ubuntu-pc kernel: [  4.010400] usb 1-1: Product: Cruzer Blade
+Nov  4 08:55:05 ubuntu-pc kernel: [  5.011700] sd 2:0:0:0: [sdb] 15266816 512-byte logical blocks: (7.82 GB/7.28 GiB)
+Nov  4 08:55:05 ubuntu-pc kernel: [  5.013000] ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x6 frozen
+Nov  4 08:55:06 ubuntu-pc kernel: [  6.014300] audit: type=1400 audit(1730706906.123:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/bin/man" pid=702 comm="apparmor_parser"
+Nov  4 10:15:44 ubuntu-pc kernel: [4844.015600] usb 1-1: USB disconnect, device number 2
+Nov  5 07:45:10 ubuntu-pc kernel: [82210.016900] e1000: enp0s3 NIC Link is Down
+Nov  5 07:45:14 ubuntu-pc kernel: [82214.018200] e1000: enp0s3 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: RX
+Nov  5 09:35:48 ubuntu-pc kernel: [88848.019500] usb 1-1: new high-speed USB device number 3 using ehci-pci
+Nov  5 09:35:48 ubuntu-pc kernel: [88848.020800] usb 1-1: Product: Cruzer Blade
+Nov  5 09:35:49 ubuntu-pc kernel: [88849.022100] sd 3:0:0:0: [sdb] Attached SCSI removable disk
+Nov  5 10:12:19 ubuntu-pc kernel: [91039.023400] Out of memory: Killed process 2345 (java) total-vm:4096000kB, anon-rss:1843200kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:3820kB oom_score_adj:0
+Nov  5 11:40:02 ubuntu-pc kernel: [96302.024700] EXT4-fs error (device sdb1): ext4_find_entry:1455: inode #2: comm ls: reading directory lblock 0
+Nov  5 11:40:02 ubuntu-pc kernel: [96302.026000] blk_update_request: I/O error, dev sdb, sector 2048 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+Nov  5 12:03:55 ubuntu-pc kernel: [97735.027300] python3[3321]: segfault at 0 ip 00007f3c1a2b4e10 sp 00007ffc9d3a2c10 error 4 in libc.so.6[7f3c1a200000+195000]
+Nov  5 15:50:30 ubuntu-pc kernel: [111330.028600] CPU0: Core temperature above threshold, cpu clock throttled (total events = 3)
+Nov  5 15:50:31 ubuntu-pc kernel: [111331.029900] CPU0: Core temperature/speed normal
+Nov  6 09:15:30 ubuntu-pc kernel: [174030.031200] [UFW BLOCK] IN=enp0s3 OUT= MAC=08:00:27:4e:66:a1:52:54:00:12:35:02:08:00 SRC=203.0.113.45 DST=192.168.1.37 LEN=60 TOS=0x00 PREC=0x00 TTL=52 ID=54321 DF PROTO=TCP SPT=40022 DPT=22 WINDOW=64240 RES=0x00 SYN URGP=0
+Nov  6 09:15:31 ubuntu-pc kernel: [174031.032500] [UFW BLOCK] IN=enp0s3 OUT= MAC=08:00:27:4e:66:a1:52:54:00:12:35:02:08:00 SRC=198.51.100.23 DST=192.168.1.37 LEN=44 TOS=0x00 PREC=0x00 TTL=240 ID=61000 PROTO=TCP SPT=51234 DPT=3389 WINDOW=1024 RES=0x00 SYN URGP=0

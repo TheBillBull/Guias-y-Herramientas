@@ -1,0 +1,21 @@
+www.cas-training.com
+mail.google.com
+ejemplo.org
+servidor.dominio.es
+a.b.c.ejemplo.net
+host1.empresa.com
+web.mi-empresa.info
+ftp.ubuntu.com
+localhost
+mi-pc.local
+test.uk
+intranet.corp.empresa.com
+ns1.dominio.org
+-malo.ejemplo.com
+malo-.ejemplo.com
+ejem plo.com
+ejemplo..com
+www.ejemplo.com.
+WWW.EJEMPLO.COM
+tienda.ejemplo.tienda
+aula.cas-training.com

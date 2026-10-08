@@ -1,0 +1,22 @@
+juan@cas-training.com
+nombre.apellido@dominio.es
+user+etiqueta@gmail.com
+ana_garcia99@ejemplo.org
+MAYUSCULAS@EJEMPLO.COM
+a@b.co
+pepe@sub.dominio.co.uk
+info@mi-empresa.net
+sin-arroba.com
+@sin-usuario.com
+doble@@ejemplo.com
+espacios en@ejemplo.com
+usuario@dominio
+usuario@.com
+usuario@dominio..com
+usuario@-dominio.com
+.punto@ejemplo.com
+punto.@ejemplo.com
+us..er@ejemplo.com
+usuario@ejemplo.c
+Mi correo es luis@ejemplo.com, escribeme.
+Contacto: ventas@tienda.es / soporte@tienda.es

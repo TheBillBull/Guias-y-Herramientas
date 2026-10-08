@@ -1,0 +1,13 @@
+#FFF
+#ffffff
+#1a2B3c
+#12345G
+#12345
+#1234567
+FFFFFF
+rgb(255,0,0)
+rgb(255, 128, 0)
+rgb(256,0,0)
+rojo
+color: #ff0000;
+background: #00f;

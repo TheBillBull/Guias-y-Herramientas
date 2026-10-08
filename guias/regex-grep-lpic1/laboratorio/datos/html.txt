@@ -1,0 +1,10 @@
+<html>
+<body>
+<h1>Titulo principal</h1>
+<p>Un parrafo con <b>negrita</b> y <i>cursiva</i> dentro.</p>
+<a href="https://www.ejemplo.com">Enlace uno</a> y <a href="http://otro.org/pagina">Enlace dos</a>
+<img src="foto.jpg" alt="Una foto">
+<!-- comentario html -->
+<br/>
+</body>
+</html>

@@ -1,0 +1,68 @@
+Nov  4 08:55:08 ubuntu-pc sshd[2762]: Server listening on 0.0.0.0 port 22.
+Nov  4 08:55:08 ubuntu-pc sshd[6036]: Server listening on :: port 22.
+Nov  4 09:02:10 ubuntu-pc sshd[3990]: Accepted publickey for alumno from 192.168.1.50 port 52144 ssh2: ED25519 SHA256:xK3d9Qe1mZb7vLw0PqR2sT8uYh4nCj6aVfBgE5iOtXk
+Nov  4 09:02:10 ubuntu-pc sshd[2210]: pam_unix(sshd:session): session opened for user alumno(uid=1000) by (uid=0)
+Nov  4 09:02:15 ubuntu-pc systemd-logind[610]: New session 1 of user alumno.
+Nov  4 09:05:21 ubuntu-pc sudo: alumno : TTY=pts/0 ; PWD=/home/alumno ; USER=root ; COMMAND=/usr/bin/apt update
+Nov  4 09:05:21 ubuntu-pc sudo: pam_unix(sudo:session): session opened for user root(uid=0) by alumno(uid=1000)
+Nov  4 09:05:35 ubuntu-pc sudo: pam_unix(sudo:session): session closed for user root
+Nov  4 09:12:00 ubuntu-pc sudo: alumno : TTY=pts/0 ; PWD=/home/alumno ; USER=root ; COMMAND=/usr/bin/apt install -y nano vim curl git
+Nov  4 09:12:00 ubuntu-pc sudo: pam_unix(sudo:session): session opened for user root(uid=0) by alumno(uid=1000)
+Nov  4 09:13:45 ubuntu-pc sudo: pam_unix(sudo:session): session closed for user root
+Nov  4 10:40:12 ubuntu-pc useradd[2301]: new group: name=invitado, GID=1005
+Nov  4 10:40:12 ubuntu-pc useradd[2301]: new user: name=invitado, UID=1005, GID=1005, home=/home/invitado, shell=/usr/sbin/nologin, from=/dev/pts/0
+Nov  4 10:40:30 ubuntu-pc passwd[2310]: pam_unix(passwd:chauthtok): password changed for invitado
+Nov  4 10:41:02 ubuntu-pc chfn[2315]: changed user 'invitado' information
+Nov  4 13:44:02 ubuntu-pc sshd[1672]: Failed password for invalid user admin from 203.0.113.45 port 40022 ssh2
+Nov  4 13:44:05 ubuntu-pc sshd[2205]: Failed password for invalid user admin from 203.0.113.45 port 40022 ssh2
+Nov  4 13:44:09 ubuntu-pc sshd[3446]: Failed password for invalid user admin from 203.0.113.45 port 40022 ssh2
+Nov  4 13:44:09 ubuntu-pc sshd[670]: error: maximum authentication attempts exceeded for invalid user admin from 203.0.113.45 port 40022 ssh2 [preauth]
+Nov  4 13:44:09 ubuntu-pc sshd[3068]: Disconnecting invalid user admin 203.0.113.45 port 40022: Too many authentication failures [preauth]
+Nov  4 13:51:17 ubuntu-pc sshd[7778]: Invalid user test from 203.0.113.45 port 41333
+Nov  4 13:51:19 ubuntu-pc sshd[4461]: Failed password for invalid user test from 203.0.113.45 port 41333 ssh2
+Nov  4 13:51:21 ubuntu-pc sshd[6339]: Connection closed by invalid user test 203.0.113.45 port 41333 [preauth]
+Nov  4 13:58:40 ubuntu-pc sshd[4344]: Invalid user oracle from 198.51.100.23 port 51100
+Nov  4 13:58:42 ubuntu-pc sshd[1934]: Failed password for invalid user oracle from 198.51.100.23 port 51100 ssh2
+Nov  4 14:02:11 ubuntu-pc sshd[3805]: Failed password for root from 198.51.100.23 port 51234 ssh2
+Nov  4 14:02:14 ubuntu-pc sshd[5256]: Failed password for root from 198.51.100.23 port 51234 ssh2
+Nov  4 14:02:16 ubuntu-pc sshd[4520]: Connection closed by authenticating user root 198.51.100.23 port 51234 [preauth]
+Nov  4 14:02:16 ubuntu-pc sshd[8155]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=198.51.100.23  user=root
+Nov  4 18:01:50 ubuntu-pc sshd[4919]: Disconnected from user alumno 192.168.1.50 port 52144
+Nov  4 18:01:50 ubuntu-pc sshd[2210]: pam_unix(sshd:session): session closed for user alumno
+Nov  5 08:30:08 ubuntu-pc sshd[8497]: Accepted password for alumno from 192.168.1.50 port 53871 ssh2
+Nov  5 08:30:08 ubuntu-pc sshd[3010]: pam_unix(sshd:session): session opened for user alumno(uid=1000) by (uid=0)
+Nov  5 08:41:19 ubuntu-pc sudo: alumno : TTY=pts/0 ; PWD=/home/alumno ; USER=root ; COMMAND=/usr/bin/systemctl restart ssh
+Nov  5 08:41:19 ubuntu-pc sudo: pam_unix(sudo:session): session opened for user root(uid=0) by alumno(uid=1000)
+Nov  5 08:41:20 ubuntu-pc sudo: pam_unix(sudo:session): session closed for user root
+Nov  5 10:02:44 ubuntu-pc sudo: pam_unix(sudo:auth): authentication failure; logname=luis uid=1002 euid=0 tty=/dev/pts/1 ruser=luis rhost=  user=luis
+Nov  5 10:02:50 ubuntu-pc sudo: luis : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/luis ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow
+Nov  5 10:55:31 ubuntu-pc sshd[9180]: Accepted password for luis from 192.168.1.51 port 40960 ssh2
+Nov  5 10:55:31 ubuntu-pc sshd[3120]: pam_unix(sshd:session): session opened for user luis(uid=1002) by (uid=0)
+Nov  5 11:10:03 ubuntu-pc sshd[7743]: Failed password for luis from 192.168.1.51 port 40990 ssh2
+Nov  5 11:10:07 ubuntu-pc sshd[7397]: Accepted password for luis from 192.168.1.51 port 40990 ssh2
+Nov  5 13:02:00 ubuntu-pc sshd[3892]: Received signal 15; terminating.
+Nov  5 13:02:01 ubuntu-pc sshd[1760]: Server listening on 0.0.0.0 port 22.
+Nov  5 13:02:01 ubuntu-pc sshd[5537]: Server listening on :: port 22.
+Nov  5 15:12:33 ubuntu-pc sshd[5556]: Failed password for invalid user postgres from 203.0.113.99 port 33210 ssh2
+Nov  5 15:12:36 ubuntu-pc sshd[5161]: Failed password for invalid user postgres from 203.0.113.99 port 33210 ssh2
+Nov  5 15:12:38 ubuntu-pc sshd[2824]: Failed password for invalid user ubuntu from 203.0.113.99 port 33214 ssh2
+Nov  5 17:59:55 ubuntu-pc sshd[9849]: Disconnected from user alumno 192.168.1.50 port 53871
+Nov  5 17:59:55 ubuntu-pc sshd[3010]: pam_unix(sshd:session): session closed for user alumno
+Nov  5 18:30:00 ubuntu-pc su[3555]: (to root) alumno on pts/0
+Nov  5 18:30:00 ubuntu-pc su[3555]: pam_unix(su:session): session opened for user root(uid=0) by alumno(uid=1000)
+Nov  5 18:35:12 ubuntu-pc su[3555]: pam_unix(su:session): session closed for user root
+Nov  5 18:40:00 ubuntu-pc su[3601]: FAILED SU (to root) luis on pts/1
+Nov  6 07:59:10 ubuntu-pc sshd[3801]: Accepted publickey for ana from 192.168.1.60 port 61004 ssh2: RSA SHA256:Qw9eRt2yUi3oPa4sDf5gHj6kLz7xCv8bNm0QwErTyUi
+Nov  6 07:59:10 ubuntu-pc sshd[3801]: pam_unix(sshd:session): session opened for user ana(uid=1001) by (uid=0)
+Nov  6 08:17:01 ubuntu-pc CRON[8713]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Nov  6 08:17:01 ubuntu-pc CRON[4182]: pam_unix(cron:session): session closed for user root
+Nov  6 09:15:40 ubuntu-pc sshd[4696]: Invalid user admin from 203.0.113.45 port 42001
+Nov  6 09:15:42 ubuntu-pc sshd[9239]: Failed password for invalid user admin from 203.0.113.45 port 42001 ssh2
+Nov  6 09:16:00 ubuntu-pc sshd[2248]: Invalid user guest from 192.0.2.77 port 50200
+Nov  6 09:17:01 ubuntu-pc CRON[3802]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Nov  6 09:17:01 ubuntu-pc CRON[6966]: pam_unix(cron:session): session closed for user root
+Nov  6 09:40:01 ubuntu-pc sudo: ana : TTY=pts/0 ; PWD=/home/ana ; USER=root ; COMMAND=/usr/sbin/useradd -m -s /bin/bash pedro
+Nov  6 09:40:01 ubuntu-pc useradd[3900]: new group: name=pedro, GID=1004
+Nov  6 09:40:01 ubuntu-pc useradd[3900]: new user: name=pedro, UID=1004, GID=1100, home=/home/pedro, shell=/bin/bash, from=/dev/pts/0
+Nov  6 10:17:01 ubuntu-pc CRON[3485]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Nov  6 10:17:01 ubuntu-pc CRON[9042]: pam_unix(cron:session): session closed for user root

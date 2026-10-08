@@ -1,0 +1,13 @@
+id,nombre,apellido,email,edad,ciudad,salario
+1,Juan,Flores,juan.flores@cas-training.com,34,Madrid,2450.50
+2,Ana,García,ana.garcia@ejemplo.org,28,Barcelona,2100.00
+3,Luis,Pérez,luis.perez@ejemplo.com,45,Sevilla,3200.75
+4,Marta,Ruiz,marta.ruiz@tienda.es,19,Madrid,1200.00
+5,Pedro,Gómez,pedro.gomez@ejemplo.net,52,Valencia,3900.00
+6,Lucía,Martín,lucia.martin@ejemplo.org,31,Bilbao,2650.25
+7,Carlos,Sánchez,carlos.sanchez@empresa.com,23,Madrid,1850.00
+8,María,Fernández,maria.fernandez@empresa.com,40,Barcelona,3100.00
+9,José,Rodríguez,jose.rodriguez@ejemplo.com,61,Sevilla,4100.50
+10,Beatriz,Jiménez,beatriz.jimenez@tienda.es,27,Valencia,2300.00
+11,Álvaro,Núñez,alvaro.nunez@ejemplo.net,36,Madrid,2750.00
+12,Óscar,Ramírez,oscar.ramirez@empresa.com,29,Bilbao,2400.80

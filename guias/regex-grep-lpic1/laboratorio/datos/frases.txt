@@ -1,0 +1,20 @@
+El perro come carne.
+El gato duerme en el sofá.
+La casa es grande y blanca.
+¿Dónde está la biblioteca?
+¡Qué día tan bonito!
+Hoy es lunes, 14 de octubre de 2024.
+Mañana será martes.
+El el perro ladra mucho.
+Voy a a la playa.
+Linux es libre, Linux es gratis.
+Me gusta el café, el té y el chocolate.
+Tengo 3 gatos, 2 perros y 15 peces.
+El número de teléfono es 612345678.
+Mi correo es juan@ejemplo.com y el tuyo es ana@ejemplo.org.
+la linea en minusculas sin punto final
+EN MAYUSCULAS Y SIN PUNTO
+   Esta frase empieza con tres espacios.
+Esta frase termina con espacios.   
+	Esta empieza con un tabulador.
+Fin.

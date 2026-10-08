@@ -1,0 +1,17 @@
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1 167432 11856 ?        Ss   08:55   0:02 /sbin/init splash
+root           2  0.0  0.0      0     0 ?        S    08:55   0:00 [kthreadd]
+root         610  0.0  0.1  16120  7168 ?        Ss   08:55   0:00 /usr/lib/systemd/systemd-logind
+syslog       812  0.0  0.1 222404  5120 ?        Ssl  08:55   0:00 /usr/sbin/rsyslogd -n -iNONE
+root         655  0.1  0.3 330412 15360 ?        Ssl  08:55   0:03 /usr/sbin/NetworkManager --no-daemon
+root         701  0.0  0.1  12400  6144 ?        Ss   08:55   0:00 /usr/sbin/cron -f -P
+root         902  0.0  0.1  15440  8832 ?        Ss   14:22   0:00 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+www-data    1101  0.0  0.2 1990812 9472 ?       Sl   14:58   0:00 /usr/sbin/apache2 -k start
+www-data    1102  0.0  0.2 1990812 9472 ?       Sl   14:58   0:00 /usr/sbin/apache2 -k start
+mysql       1500  0.5  8.2 1850492 328704 ?     Ssl  08:56   1:12 /usr/sbin/mysqld
+postgres    1620  0.0  0.5 217636 24576 ?       Ss   08:56   0:00 /usr/lib/postgresql/16/bin/postgres -D /var/lib/postgresql/16/main
+alumno      2210  0.0  0.1  17016  9600 ?        Ss   09:02   0:00 /usr/lib/systemd/systemd --user
+alumno      2255  0.0  0.1  21456  5504 pts/0    Ss   09:02   0:00 -bash
+alumno      3321  2.1  1.0 280400 41216 pts/0    Sl   12:03   0:12 python3 programa.py
+alumno      4100  0.0  0.0  19536  3584 pts/0    R+   18:45   0:00 ps aux
+luis        3120  0.0  0.1  21456  5376 pts/1    Ss   10:55   0:00 -zsh

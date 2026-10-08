@@ -1,0 +1,10 @@
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+tmpfs            1,6G   1,9M  1,6G   1% /run
+/dev/sda2         49G    18G   29G  39% /
+tmpfs            7,8G      0  7,8G   0% /dev/shm
+tmpfs            5,0M   4,0K  5,0M   1% /run/lock
+/dev/sda1        511M   6,1M  505M   2% /boot/efi
+/dev/sdb1        200G   150G   40G  79% /datos
+/dev/sdc1        500G    90G  410G  18% /backup
+//nas/compartido 1,0T   720G  304G  71% /mnt/nas
+tmpfs            1,6G   100K  1,6G   1% /run/user/1000

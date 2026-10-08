@@ -1,0 +1,13 @@
+http://www.ejemplo.com
+https://www.ejemplo.com/
+https://cas-training.com/cursos/linux?id=5&lang=es
+ftp://ftp.ubuntu.com/pub/
+http://localhost:8080/index.html
+https://192.168.1.10:8443/admin
+www.sin-protocolo.com
+mailto:juan@ejemplo.com
+file:///etc/passwd
+htp://mal-escrita.com
+https//sin-dos-puntos.com
+https://ejemplo.com/ruta con espacios
+Visita https://github.com/TheBillBull y http://ejemplo.org/pagina.html hoy

@@ -1,0 +1,10 @@
+[Mon Oct 14 10:00:01.123456 2024] [mpm_prefork:notice] [pid 1042] AH00163: Apache/2.4.58 (Ubuntu) configured -- resuming normal operations
+[Mon Oct 14 10:00:01.123499 2024] [core:notice] [pid 1042] AH00094: Command line: '/usr/sbin/apache2'
+[Mon Oct 14 10:05:12.482113 2024] [php:error] [pid 1101] [client 192.168.1.50:51514] PHP Warning:  Undefined variable $nombre in /var/www/html/saludo.php on line 7
+[Mon Oct 14 10:12:40.001122 2024] [core:error] [pid 1102] [client 198.51.100.7:40022] AH00126: Invalid URI in request GET /../../etc/passwd HTTP/1.1
+[Mon Oct 14 10:20:33.994412 2024] [autoindex:error] [pid 1103] [client 192.168.1.51:60112] AH01276: Cannot serve directory /var/www/html/privado/: No matching DirectoryIndex (index.html) found, and server-generated directory index forbidden by Options directive
+[Mon Oct 14 10:31:01.100000 2024] [core:error] [pid 1104] [client 203.0.113.45:33100] AH00135: Invalid method in request \x16\x03\x01
+[Mon Oct 14 10:31:02.200000 2024] [authz_core:error] [pid 1105] [client 203.0.113.45:33101] AH01630: client denied by server configuration: /var/www/html/.git/config
+[Mon Oct 14 10:44:19.310000 2024] [proxy_fcgi:error] [pid 1106] [client 192.168.1.60:52300] AH01071: Got error 'Primary script unknown'
+[Mon Oct 14 11:01:00.000001 2024] [mpm_prefork:error] [pid 1042] AH00161: server reached MaxRequestWorkers setting, consider raising the MaxRequestWorkers setting
+[Mon Oct 14 11:30:45.777777 2024] [ssl:warn] [pid 1042] AH01909: www.ejemplo.com:443:0 server certificate does NOT include an ID which matches the server name

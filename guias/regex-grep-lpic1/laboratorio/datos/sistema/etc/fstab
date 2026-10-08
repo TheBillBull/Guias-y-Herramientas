@@ -1,0 +1,12 @@
+# /etc/fstab: static file system information.
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during installation
+UUID=3f5a9c1e-7b2d-4e8a-9c01-5d6e7f8a9b0c /               ext4    errors=remount-ro 0       1
+# /boot/efi was on /dev/sda1 during installation
+UUID=A1B2-C3D4  /boot/efi       vfat    umask=0077      0       1
+/swapfile                                 none            swap    sw              0       0
+/dev/sdb1       /datos          ext4    defaults        0       2
+/dev/sdc1       /backup         xfs     defaults,noatime 0      2
+//nas/compartido /mnt/nas       cifs    credentials=/root/.cred,uid=1000 0 0
+tmpfs           /tmp            tmpfs   defaults,size=2G 0      0

@@ -1,0 +1,3 @@
+               total        usado       libre  compartido   búf/caché  disponible
+Mem:        16186736     5123456     7345000      451200     3718280     10331640
+Inter:       2097148           0     2097148

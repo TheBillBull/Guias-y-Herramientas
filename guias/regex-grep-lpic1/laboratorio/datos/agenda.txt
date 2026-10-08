@@ -1,0 +1,6 @@
+Nombre: Juan Flores | Tel: 612345678 | Email: juan@cas-training.com
+Nombre: Ana García | Tel: 655443322 | Email: ana.garcia@ejemplo.org
+Nombre: Luis Pérez | Tel: 91 555 66 77 | Email: luis@ejemplo.com
+Nombre: Marta Ruiz | Tel: 699001122 | Email: marta_ruiz@tienda.es
+Nombre: Pedro Gómez | Tel: sin telefono | Email: pedro@ejemplo.net
+Nombre: Lucía Martín | Tel: 644112233 | Email: sin correo

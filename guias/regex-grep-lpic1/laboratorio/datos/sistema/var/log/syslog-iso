@@ -1,0 +1,19 @@
+2024-11-05T07:17:01.891470+01:00 ubuntu-pc CRON[4616]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T07:45:15.234080+01:00 ubuntu-pc NetworkManager[655]: <info>  [1730790315.4411] dhcp4 (enp0s3): state changed new lease, address=192.168.1.37
+2024-11-05T08:17:01.335490+01:00 ubuntu-pc CRON[8764]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T08:30:12.371836+01:00 ubuntu-pc systemd-logind[610]: New session 2 of user alumno.
+2024-11-05T08:30:12.786565+01:00 ubuntu-pc systemd[1]: Started session-2.scope - Session 2 of User alumno.
+2024-11-05T09:10:33.736672+01:00 ubuntu-pc systemd[1]: Starting apt-daily-upgrade.service - Daily apt upgrade and clean activities...
+2024-11-05T09:11:02.934711+01:00 ubuntu-pc systemd[1]: Finished apt-daily-upgrade.service - Daily apt upgrade and clean activities.
+2024-11-05T09:17:01.838627+01:00 ubuntu-pc CRON[6402]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T10:12:19.047825+01:00 ubuntu-pc systemd[1]: session-2.scope: A process of this unit has been killed by the OOM killer.
+2024-11-05T10:17:01.606977+01:00 ubuntu-pc CRON[7413]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T10:22:50.944683+01:00 ubuntu-pc systemd[1]: Started motd-news.service - Message of the Day.
+2024-11-05T11:08:12.977308+01:00 ubuntu-pc systemd[1]: Started e2scrub_all.service - Online ext4 Metadata Check for All Filesystems.
+2024-11-05T11:17:01.710956+01:00 ubuntu-pc CRON[9239]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T12:17:01.570592+01:00 ubuntu-pc CRON[4173]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T12:20:00.395268+01:00 ubuntu-pc systemd[1]: Reloading.
+2024-11-05T12:39:21.981605+01:00 ubuntu-pc systemd[1]: Started e2scrub_all.service - Online ext4 Metadata Check for All Filesystems.
+2024-11-05T13:07:44.777412+01:00 ubuntu-pc snapd[912]: storehelpers.go:769: cannot refresh: snap has no updates available: "core22"
+2024-11-05T13:17:01.755459+01:00 ubuntu-pc CRON[5671]: (root) CMD (cd / && run-parts --report /etc/cron.hourly)
+2024-11-05T13:26:20.996785+01:00 ubuntu-pc systemd[1]: Started update-notifier-download.service - Download data for packages that failed at package install time.

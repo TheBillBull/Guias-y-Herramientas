@@ -1,0 +1,13 @@
+Arquitectura:                           x86_64
+modo(s) de operación de las CPUs:       32-bit, 64-bit
+Address sizes:                          39 bits physical, 48 bits virtual
+Orden de los bytes:                     Little Endian
+CPU(s):                                 8
+Lista de la(s) CPU(s) en línea:         0-7
+ID de fabricante:                       GenuineIntel
+Nombre del modelo:                      Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+Familia de CPU:                         6
+Modelo:                                 142
+Hilo(s) de procesamiento por núcleo:    2
+Núcleo(s) por «socket»:                 4
+CPU MHz máx.:                           4000,0000

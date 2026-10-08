@@ -1,0 +1,15 @@
+Linux version 6.8.0-45-generic
+Python 3.12.3
+openssl 3.0.13
+v1.2.3
+1.2.3-rc1
+bash 5.2.21(1)-release
+nginx/1.24.0
+GNU grep 3.11
+sed (GNU sed) 4.9
+kernel 5.15.0-91-generic #101-Ubuntu SMP
+OpenSSH_9.6p1 Ubuntu-3ubuntu13.5
+version 10
+v2
+1.0
+Ubuntu 24.04.1 LTS

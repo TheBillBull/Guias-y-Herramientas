@@ -1,0 +1,9 @@
+alumno   pts/0        192.168.1.50     Tue Nov  5 08:30   still logged in
+luis     pts/1        192.168.1.51     Tue Nov  5 10:55   still logged in
+ana      pts/0        192.168.1.60     Mon Nov  4 17:10 - 18:02  (00:52)
+alumno   tty2         tty2             Mon Nov  4 09:02   still logged in
+reboot   system boot  6.8.0-45-generic Mon Nov  4 08:55   still running
+alumno   pts/0        192.168.1.50     Fri Nov  1 17:45 - 18:30  (00:45)
+root     pts/2        198.51.100.23    Fri Nov  1 03:12 - 03:12  (00:00)
+reboot   system boot  6.8.0-44-generic Fri Nov  1 08:01 - 08:54 (3+00:53)
+wtmp begins Fri Nov  1 08:01:11 2024
