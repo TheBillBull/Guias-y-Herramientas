@@ -40,6 +40,7 @@ systemd-journal:x:999:
 systemd-network:x:998:
 systemd-timesync:x:996:
 systemd-resolve:x:991:
+fwupd-refresh:x:990:
 messagebus:x:104:
 syslog:x:105:
 uuidd:x:106:

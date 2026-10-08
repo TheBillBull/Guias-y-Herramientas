@@ -27,3 +27,4 @@ IP de origen=203.0.113.45 destino=198.51.100.7
 la ip 10.10.10.10, y tambien la 10.10.10.11.
 version 1.2.3.4 del programa
 192x168x1x1
+192.168.1.100

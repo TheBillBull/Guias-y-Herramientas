@@ -378,6 +378,7 @@ _Resultado_ (coincidencias entre « »):
 ```text
 «192.168.1.1»
 «192x168x1x1»
+«192.168.1.1»00
 ```
 
 
@@ -391,8 +392,11 @@ _Resultado_ (coincidencias entre « »):
 
 ```text
 «192.168.1.1»
+«192.168.1.1»00
 ```
 
+
+Ya no cuela el señuelo. Pero sigue saliendo `192.168.1.100`: contiene `192.168.1.1` seguido de `00`, y nada en el patrón dice que ahí deba terminar el número. Esa otra pega la resolveremos en el [capítulo 7](07-palabras-y-fronteras.md).
 
 ### Los caracteres que normalmente hay que escapar
 
@@ -1215,7 +1219,7 @@ _Resultado_ (coincidencias entre « »):
 
 #### 🟡 Ejercicio 3.22 · La IP exacta
 
-Muestra la línea de `ips.txt` que contiene la IP `192.168.1.1` **de verdad** (no `192x168x1x1`).
+Muestra las líneas de `ips.txt` que contienen la IP `192.168.1.1` **de verdad** (sin que se cuele `192x168x1x1`).
 
 <details>
 <summary>💡 Ver solución</summary>
@@ -1229,10 +1233,11 @@ _Resultado_ (coincidencias entre « »):
 
 ```text
 «192.168.1.1»
+«192.168.1.1»00
 ```
 
 
-Cada punto de la IP hay que escaparlo. Y ojo: esto también encontraría una línea `192.168.1.100` (porque tras el `1` final puede seguir lo que sea). Esa pega la resolvemos en el capítulo 7 con `\b` y `-w`.
+Cada punto de la IP hay que escaparlo. Y ojo: sigue saliendo también `192.168.1.100` (porque tras el `1` final puede seguir lo que sea). Esa pega la resolvemos en el capítulo 7 con `\b` y `-w`.
 </details>
 
 
@@ -1555,4 +1560,4 @@ _Resultado_ (coincidencias entre « »):
 ➡️ **Siguiente parada:** el [Capítulo 4](04-corchetes.md): los **corchetes**, la herramienta más poderosa de este nivel.
 
 ---
-⬅️ [Capítulo 2 · Comodines de la terminal ≠ expresiones regulares](02-comodines-vs-regex.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 2 · Comodines de la terminal ≠ expresiones regulares](02-comodines-vs-regex.md) · 🏠 [Índice](README.md) · [Capítulo 4 · Los corchetes `[ ]`: elegir entre varios caracteres](04-corchetes.md) ➡️

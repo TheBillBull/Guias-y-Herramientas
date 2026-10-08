@@ -1349,4 +1349,4 @@ _Resultado:_
 ➡️ **Siguiente parada:** [Capítulo 2](02-comodines-vs-regex.md): la gran confusión entre los comodines de la terminal y las expresiones regulares.
 
 ---
-⬅️ [Capítulo 0 · Tu primera vez frente a una terminal](00-primeros-pasos.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 0 · Tu primera vez frente a una terminal](00-primeros-pasos.md) · 🏠 [Índice](README.md) · [Capítulo 2 · Comodines de la terminal ≠ expresiones regulares](02-comodines-vs-regex.md) ➡️

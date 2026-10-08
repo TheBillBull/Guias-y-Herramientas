@@ -1089,6 +1089,7 @@ _Resultado_ (coincidencias entre « »):
 Gateway «192.168».0.254 activo
 «192.168».0.1:8080
 «192.168».1.0/24
+«192.168».1.100
 ```
 
 
@@ -1601,4 +1602,4 @@ gato gata gatito gatos perro perra perrito casa casas caso cosa cama camino ala 
 ➡️ **Siguiente parada:** [Capítulo 5](05-repeticiones.md): cómo decir *"esto, repetido varias veces"* con `*`, `+`, `?` y `{n,m}`… y por fin, el misterio de **la coma**.
 
 ---
-⬅️ [Capítulo 3 · El punto y las anclas: `.` `^` `$` `\`](03-punto-y-anclas.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 3 · El punto y las anclas: `.` `^` `$` `\`](03-punto-y-anclas.md) · 🏠 [Índice](README.md) · [Capítulo 5 · Repetir: `*` `+` `?` `{n,m}` y el misterio de la coma](05-repeticiones.md) ➡️

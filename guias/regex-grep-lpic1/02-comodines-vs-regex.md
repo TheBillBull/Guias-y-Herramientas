@@ -653,4 +653,4 @@ Con comillas, la terminal no expande nada y `ls` busca un fichero cuyo nombre se
 ➡️ **Siguiente parada:** el [Capítulo 3](03-punto-y-anclas.md): por fin, los primeros **superpoderes** de las regex: el punto, el circunflejo y el dólar.
 
 ---
-⬅️ [Capítulo 1 · Tu primer `grep`: encontrar agujas en pajares](01-primer-grep.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 1 · Tu primer `grep`: encontrar agujas en pajares](01-primer-grep.md) · 🏠 [Índice](README.md) · [Capítulo 3 · El punto y las anclas: `.` `^` `$` `\`](03-punto-y-anclas.md) ➡️
