@@ -1,5 +1,0 @@
-#!/bin/bash
-# Docker crea /etc/hosts y /etc/hostname al arrancar el contenedor.
-# Aquí los dejamos con el contenido que usa el libro (como root, vía sudo).
-cp /opt/lab/vivos/hosts /etc/hosts
-echo ubuntu-pc > /etc/hostname

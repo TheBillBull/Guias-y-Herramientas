@@ -4,7 +4,7 @@
 >
 > 📘 **LPIC-1:** **103.4** (*Usar flujos, tuberías y redirecciones*), con trozos de 103.1 (listas de órdenes, `$( )`) y 103.2 (filtros).
 >
-> 🧪 `cd ~/lab-regex`
+> 🧪 `cd ~/lab-regex` · Si `/var/log/auth.log` no existe o no puedes leerlo en tu máquina, usa la copia `~/lab-regex/sistema/var/log/auth.log`.
 >
 > 🗺️ **¿Cuándo leerlo?** Cuando termines el [capítulo 9](09-opciones-de-grep.md) (allí viste lo básico). Es un capítulo **"de fontanería"**: no es regex pura, pero **todos** los capítulos que siguen (10 a 16) usan tuberías sin parar. Si te atascas con alguna `|` o `2>&1` más adelante, vuelve aquí.
 
@@ -44,7 +44,7 @@ ls: cannot access '/no/existe': No such file or directory
 ```
 
 
-Salen **dos cosas**: el nombre del fichero que existe (por `stdout`) y una queja por el que no existe (por `stderr`). *(El mensaje sale en inglés porque el laboratorio usa el idioma neutro `C`; en un Ubuntu en español dirá «No existe el fichero o el directorio». Y `ls` termina con código 2, que es lo normal cuando algún argumento falla.)* Vamos a separarlas. Primero **tiramos la salida normal** (a `/dev/null`, el agujero negro de Linux):
+Salen **dos cosas**: el nombre del fichero que existe (por `stdout`) y una queja por el que no existe (por `stderr`). *(El mensaje del libro sale en inglés porque se generó con el idioma neutro `C`; en un Ubuntu en español dirá «No existe el fichero o el directorio». Y `ls` termina con código 2, que es lo normal cuando algún argumento falla.)* Vamos a separarlas. Primero **tiramos la salida normal** (a `/dev/null`, el agujero negro de Linux):
 
 ```bash
 ls /etc/hostname /no/existe > /dev/null
@@ -570,7 +570,7 @@ Muy útil para **depurar** una tubería larga: pones un `tee paso1.txt` a medio 
 
 Esto confunde a todo el mundo. Las redirecciones (`>`) las hace **tu shell**, **antes** de ejecutar `sudo`, así que **no tienen privilegios**:
 
-> ⚠️ Este ejemplo usa `sudo` para escribir en `/opt`, una carpeta de `root`. En el contenedor de prácticas es inocuo. En tu Ubuntu real puedes leerlo sin ejecutarlo (se crea y se borra un fichero de prueba).
+> ⚠️ Este ejemplo usa `sudo` (te pedirá tu contraseña) para escribir en `/opt`, una carpeta de `root`. Solo crea y borra un fichero de prueba, así que es inocuo; si prefieres no usar `sudo`, léelo sin ejecutarlo.
 
 ```bash
 sudo echo hola > /opt/prueba.txt
@@ -703,7 +703,7 @@ alumno:x:1000:1000:Alumno Linux,,,:/home/alumno:/bin/bash
 ```
 
 
-(`id -un` es tu nombre de usuario; el patrón queda `^alumno:`. Fíjate: **comillas dobles**, porque las simples impedirían la sustitución.) Existe la forma antigua con acentos graves `` `comando` ``: hace lo mismo, pero **no se puede anidar** bien. Usa siempre `$( )`.
+(`id -un` es tu nombre de usuario; en el libro el patrón queda `^alumno:`; en tu máquina, el tuyo. Fíjate: **comillas dobles**, porque las simples impedirían la sustitución.) Existe la forma antigua con acentos graves `` `comando` ``: hace lo mismo, pero **no se puede anidar** bien. Usa siempre `$( )`.
 
 ---
 
@@ -888,7 +888,7 @@ hola por la tubería
 
 ## 17.13 · 🏋️ Ejercicios
 
-> 🔧 Todos estos ejercicios se ejecutaron en el [entorno virtual](entorno-virtual/README.md) del libro. Cada comando ocupa **una sola línea larga** cuando se puede (¡el mínimo de comandos!) y, cuando hay que encadenar varios con `|`, el ejercicio te dice por qué.
+> 🔧 Todos estos comandos se ejecutaron de verdad (Ubuntu 24.04, `bash`, GNU `grep` 3.11). Los resultados que dependen de `/etc` o de los logs serán *parecidos* en tu máquina, con tus datos. Cada comando ocupa **una sola línea larga** cuando se puede (¡el mínimo de comandos!) y, cuando hay que encadenar varios con `|`, el ejercicio te dice por qué.
 
 #### 🟢 Ejercicio 17.1 · Guardar usuarios con bash
 
@@ -1655,7 +1655,7 @@ Truco de maestro: `2>&1` copia el destino del canal 1 **mientras todavía es la 
 
 #### 🔴 Ejercicio 17.30 · Con `sudo` no basta
 
-`sudo echo hola > /opt/prueba.txt` falla con `Permission denied`. Consigue escribir `hola` en ese fichero, comprueba su contenido y bórralo. *(Es seguro: en este laboratorio `sudo` no pide contraseña.)*
+`sudo echo hola > /opt/prueba.txt` falla con `Permission denied`. Consigue escribir `hola` en ese fichero, comprueba su contenido y bórralo. *(Te pedirá tu contraseña de `sudo`; solo crea y borra un fichero de prueba.)*
 
 <details>
 <summary>💡 Ver solución</summary>

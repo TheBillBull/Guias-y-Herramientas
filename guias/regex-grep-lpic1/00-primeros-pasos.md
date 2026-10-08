@@ -221,30 +221,7 @@ _Resultado:_
 
 ## 0.8 · Monta tu laboratorio 🧪
 
-Todos los ejercicios usan unos ficheros de prueba (listas de palabras, IPs, correos, logs falsos…). Tienes **dos caminos** para tenerlos:
-
-| | 🐳 **Camino A: ordenador virtual** (recomendado) | 🐧 **Camino B: directamente en tu Ubuntu** |
-|---|---|---|
-| Qué es | Un Ubuntu 24.04 "de usar y tirar" dentro de Docker, con el laboratorio ya montado | Un *script* que crea la carpeta `~/lab-regex` en tu ordenador |
-| Salidas | **Idénticas** a las del libro, byte a byte (mismos `/etc/passwd`, mismos logs, mismo `grep`) | **Parecidas**: tu `/etc/passwd` y tus logs son otros |
-| Riesgo | Ninguno: al salir, todo desaparece | Muy bajo: solo toca `~/lab-regex` |
-| Necesitas | Docker (instrucciones en el [README del entorno virtual](entorno-virtual/README.md)) | Un Linux con `bash` y GNU `grep` |
-
-> 🧠 ¿Por qué existe el Camino A? Porque en la vida real **tu máquina no es la mía**: otro `/etc/passwd`, otros logs, otra versión de `grep`. El ordenador virtual elimina esa diferencia: lo que ves en el libro es lo que verás tú.
-
-### Camino A · El ordenador virtual (Docker)
-
-```bash
-cd ~
-git clone -b claude/que-puedo-hacer-834z1j https://github.com/TheBillBull/Guias-y-Herramientas.git
-cd Guias-y-Herramientas/guias/regex-grep-lpic1/entorno-virtual
-bash construir.sh      # una sola vez; tarda unos minutos
-bash entrar.sh         # entras en tu ordenador virtual
-```
-
-Verás un mensaje de bienvenida y el *prompt* `alumno@ubuntu-pc:~/lab-regex$`. **Ya está**: no hay que hacer nada más, el laboratorio está montado. Para salir, `exit`; al volver a entrar tendrás un laboratorio nuevo y limpio. (`bash entrar.sh comprobar` verifica que todo coincide con el libro.)
-
-### Camino B · Tu propio Ubuntu
+Todos los ejercicios usan unos ficheros de prueba (listas de palabras, IPs, correos, logs falsos…). Se crean con **un script**.
 
 **Paso 1.** Descarga la guía (necesitas `git`; si no lo tienes: `sudo apt install git`):
 
@@ -288,14 +265,13 @@ csv-dificil.csv    macs.txt      salidas         windows.txt
 ```
 
 
-> 🔁 **Si algo se estropea**, o quieres empezar de cero, vuelve a ejecutar el Paso 2 (en el ordenador virtual, escribe `preparar-laboratorio`). Deja todo como nuevo.
+> 🔁 **Si algo se estropea**, o quieres empezar de cero, vuelve a ejecutar el Paso 2. Deja todo como nuevo.
 
 ### ¿Y los ficheros de `/etc`? ¿Y los logs?
 
-En los ejercicios verás comandos sobre ficheros **reales** del sistema, como `/etc/passwd`.
+En los ejercicios verás comandos sobre ficheros **reales** del sistema, como `/etc/passwd`. Funcionan en tu Ubuntu tal cual.
 
-- 🐳 **En el ordenador virtual (Camino A)** esos ficheros tienen **exactamente el contenido del libro**: tu salida será idéntica a la que ves aquí.
-- 🐧 **En tu Ubuntu (Camino B)** funcionan igual, pero tu `/etc/passwd` no es el mío, así que **las salidas del libro vienen de una copia de ejemplo** de un Ubuntu típico (está en `~/lab-regex/sistema/`). Tu salida será *parecida* pero no idéntica (otros usuarios, otras fechas…). Lo importante es entender el filtro. Si quieres que te salga **exactamente** igual que en el libro, usa la copia:
+Pero tu `/etc/passwd` no es igual que el mío, así que **las salidas que ves en este libro vienen de una copia de ejemplo** de un Ubuntu típico (está en `~/lab-regex/sistema/`). Tu salida será *parecida* pero no idéntica (otros usuarios, otras fechas…). Lo importante es entender el filtro. Si quieres que te salga **exactamente** igual que en el libro, usa la copia:
 
 ```bash
 grep root ~/lab-regex/sistema/etc/passwd
@@ -353,7 +329,7 @@ _Resultado:_
 ```
 
 
-`cd ~/lab-regex` te mueve y `pwd` confirma dónde estás. (En el ordenador virtual saldrá `alumno`; en tu Ubuntu, tu usuario.)
+`cd ~/lab-regex` te mueve y `pwd` confirma dónde estás. (En tu máquina saldrá tu usuario en lugar de `alumno`.)
 </details>
 
 
@@ -520,7 +496,7 @@ ubuntu-pc
 ```
 
 
-En el ordenador virtual saldrá `ubuntu-pc`; en tu máquina, el nombre de **tu** ordenador.
+En tu máquina saldrá el nombre de **tu** ordenador.
 </details>
 
 

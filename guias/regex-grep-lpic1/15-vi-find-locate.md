@@ -304,7 +304,7 @@ _Resultado:_
 ```
 
 
-> 🧪 En el entorno virtual la base de datos de `locate` **ya está construida** (se hizo `updatedb` al preparar la imagen), por eso estos comandos funcionan sin más. En tu Ubuntu real, si el fichero es nuevo, primero necesitas `sudo updatedb`; lo verás en un ejercicio. Prueba también `locate -c passwd`: el número que te salga dependerá de **tu** disco.
+> 🧪 **Para probarlos en tu máquina:** `locate` busca en una base de datos, así que primero hay que crearla (y los ficheros del laboratorio tienen que estar ya dentro): `sudo updatedb`. Si `locate` no existe, instálalo con `sudo apt install plocate`. Las rutas del libro empiezan por `/home/alumno/…`; a ti te saldrá `/home/TU-USUARIO/…`. Prueba también `locate -c passwd`: el número que te salga dependerá de **tu** disco.
 
 Y los buscadores de **programas** (104.7):
 

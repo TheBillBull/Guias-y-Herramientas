@@ -486,8 +486,8 @@ grep: /etc/gshadow: Permission denied
 grep: /etc/security/opasswd: Permission denied
 grep: /etc/shadow: Permission denied
 grep: /etc/ssl/private: Permission denied
+grep: /etc/sudoers.d/90-cloud-init-users: Permission denied
 grep: /etc/sudoers.d/README: Permission denied
-grep: /etc/sudoers.d/laboratorio: Permission denied
 grep: /etc/sudoers: Permission denied
 ```
 
@@ -1131,7 +1131,7 @@ _Resultado:_
 
 `-i` y `-c` combinados: `-ic` (o `-ci`, da igual).
 
-En tu Ubuntu real puede que necesites `sudo` o pertenecer al grupo `adm` para leer `/var/log/syslog` (en el ordenador virtual ya puedes). Para practicar con calma usa la copia: `~/lab-regex/sistema/var/log/syslog`.
+En tu Ubuntu real puede que necesites `sudo` o pertenecer al grupo `adm` para leer `/var/log/syslog`. Para practicar con calma usa la copia: `~/lab-regex/sistema/var/log/syslog`.
 </details>
 
 
