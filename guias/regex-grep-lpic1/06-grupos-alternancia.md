@@ -80,9 +80,10 @@ La **barra vertical** `|` (tecla `AltGr` + `1` en teclado español) significa **
 gato|perro    →  "gato" o "perro"
 ```
 
-| | BRE | ERE |
-|---|---|---|
-| alternativa | `\|` (extensión GNU) | `|` |
+```text
+  BRE (grep):      gato\|perro      ← barra invertida + barra vertical (extensión GNU)
+  ERE (grep -E):   gato|perro        ← solo la barra vertical
+```
 
 ```bash
 grep -E 'gato|perro' palabras.txt

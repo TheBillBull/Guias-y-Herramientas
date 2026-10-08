@@ -353,7 +353,7 @@ No todos los programas hablan el mismo dialecto (¡cuidado en el examen!):
 | `sed` | **BRE** | `-E` o `-r` (ERE) |
 | `awk` | **ERE** | — |
 | `vi` / `vim` | BRE (parecido, con sus particularidades: `\<`, `\>`) | `\v` ("very magic") |
-| `less`, `man` (al buscar con `/`) | BRE (la de GNU) | — |
+| `less`, `man` (al buscar con `/`) | en Ubuntu, sintaxis **extendida** (`\|`, `+`, `( )` sin barra) | depende de la librería con que se compiló |
 | `find -regex` | tipo **emacs** (¡ni BRE ni ERE!) | `-regextype posix-extended` |
 | `locate` | **BRE** con `-r` / `--regexp` | `--regex` = ERE |
 

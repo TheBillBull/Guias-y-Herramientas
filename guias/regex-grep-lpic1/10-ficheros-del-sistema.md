@@ -1645,4 +1645,4 @@ luis
 ➡️ **Siguiente parada:** [Capítulo 11](11-logs.md): los registros del sistema: `syslog`, `auth.log`, `dpkg.log`… con fechas, horas, IPs y mucho más.
 
 ---
-⬅️ [Capítulo 9 · Todas las opciones de `grep` (y los flujos de la terminal)](09-opciones-de-grep.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 9 · Todas las opciones de `grep` (y los flujos de la terminal)](09-opciones-de-grep.md) · 🏠 [Índice](README.md) · [Capítulo 11 · Los logs: `syslog`, `auth.log`, `ufw.log`, `dpkg.log`, Apache…](11-logs.md) ➡️
