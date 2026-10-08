@@ -507,6 +507,8 @@ _Resultado:_
 Código con pipefail: 1
 ```
 
+> ⚠️ **`set -o pipefail` se queda activado en tu terminal** hasta que la cierres (o hasta que escribas `set +o pipefail`). Así, a partir de ahora, cualquier tubería con un fallo intermedio devolverá error. Desactívalo al terminar el ejemplo.
+
 
 ### `head` corta el grifo: SIGPIPE
 
@@ -1626,7 +1628,7 @@ código: 1
 ```
 
 
-Con `pipefail`, el código de la tubería es el del **último comando que falló** (aquí el `grep`: 1).
+Con `pipefail`, el código de la tubería es el del **último comando que falló** (aquí el `grep`: 1). Si lo has probado en tu terminal, desactívalo con `set +o pipefail`.
 </details>
 
 
