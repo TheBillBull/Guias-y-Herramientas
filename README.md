@@ -11,9 +11,8 @@ Guías de estudio prácticas en español, pensadas para aprender **haciendo**.
 ## Cómo empezar
 
 ```bash
-git clone -b claude/que-puedo-hacer-834z1j https://github.com/TheBillBull/Guias-y-Herramientas.git
+git clone https://github.com/TheBillBull/Guias-y-Herramientas.git
 cd Guias-y-Herramientas/guias/regex-grep-lpic1
 less README.md
 ```
 
-(Cuando la guía esté en la rama principal, el `-b claude/que-puedo-hacer-834z1j` ya no hará falta.)

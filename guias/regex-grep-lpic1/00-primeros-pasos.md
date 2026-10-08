@@ -227,10 +227,8 @@ Todos los ejercicios usan unos ficheros de prueba (listas de palabras, IPs, corr
 
 ```bash
 cd ~
-git clone -b claude/que-puedo-hacer-834z1j https://github.com/TheBillBull/Guias-y-Herramientas.git
+git clone https://github.com/TheBillBull/Guias-y-Herramientas.git
 ```
-
-> 📝 La parte `-b claude/que-puedo-hacer-834z1j` elige la rama donde está la guía. Cuando la guía esté en la rama principal, bastará con `git clone https://github.com/TheBillBull/Guias-y-Herramientas.git`.
 
 **Paso 2.** Crea el laboratorio:
 

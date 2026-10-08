@@ -13,7 +13,7 @@ Necesitas un **Ubuntu** (o cualquier Linux con GNU `grep`) y una terminal (`Ctrl
 ```bash
 # 1. Descarga la guía
 cd ~
-git clone -b claude/que-puedo-hacer-834z1j https://github.com/TheBillBull/Guias-y-Herramientas.git
+git clone https://github.com/TheBillBull/Guias-y-Herramientas.git
 
 # 2. Crea tu laboratorio de prácticas (ficheros de ejemplo, logs, etc.)
 bash ~/Guias-y-Herramientas/guias/regex-grep-lpic1/laboratorio/preparar-laboratorio.sh
@@ -23,8 +23,6 @@ cd ~/lab-regex
 ls
 ```
 
-> 📝 La parte `-b claude/que-puedo-hacer-834z1j` elige la rama donde está la guía. Cuando esté en la rama principal bastará `git clone https://github.com/TheBillBull/Guias-y-Herramientas.git`.
->
 > 🔁 Si estropeas el laboratorio (o quieres empezar de cero), **vuelve a ejecutar el paso 2**: lo deja como nuevo.
 
 Luego sigue los capítulos **en orden**: cada uno se apoya en el anterior.
