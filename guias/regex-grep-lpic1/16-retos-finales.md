@@ -1157,7 +1157,9 @@ Si has llegado hasta aquí practicando, ya sabes:
 
 Siguiente paso: la [**chuleta**](chuleta.md) para tenerlo todo en una página, y **rehacer los ejercicios sin mirar**. ¡Eres un master de Linux en ciernes! 🐧
 
+> 🚰 **¿Te queda un cabo suelto con las tuberías?** El [capítulo 17](17-tuberias-y-redirecciones.md) (LPIC 103.4) es un **extra de fontanería**: redirecciones, `2>&1`, `tee`, `xargs`, `$( )` y `<( )`, con 37 ejercicios más. Puede leerse a partir del capítulo 9.
+
 ---
 
 ---
-⬅️ [Capítulo 15 · Regex fuera de `grep`: `less`, `vi`, `find`, `locate`](15-vi-find-locate.md) · 🏠 [Índice](README.md)
+⬅️ [Capítulo 15 · Regex fuera de `grep`: `less`, `vi`, `find`, `locate`](15-vi-find-locate.md) · 🏠 [Índice](README.md) · [Capítulo 17 · 🚰 La fontanería de Linux: entradas, salidas y tuberías](17-tuberias-y-redirecciones.md) ➡️

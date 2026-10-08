@@ -273,12 +273,38 @@ arbol/fotos/foto-vacaciones.png
 | `locate --regex 'regex'` | **regex extendida** |
 | `sudo updatedb` | **actualiza** la base de datos (la lanza `cron` a diario) |
 
-```text
-locate -r '/informe-2024-0[12]\.txt$'        # BRE; la regex va sobre la ruta completa
-locate --regex '/informe-(2023|2024)-0[1-6]\.(txt|pdf)$'     # ERE
+La regex de `locate` se aplica a la **ruta completa**. Con BRE (`-r`) y con ERE (`--regex`):
+
+```bash
+locate -r '/informe-2024-0[12]\.txt$'
+# Otra forma equivalente:
+locate --regex '/informe-2024-0(1|2)\.txt$'
 ```
 
-*(No se ejecutan en el laboratorio porque necesitan la base de datos de `updatedb`. En tu Ubuntu real, prueba `locate passwd`.)*
+_Resultado:_
+
+```text
+/home/alumno/lab-regex/arbol/informes/informe-2024-01.txt
+/home/alumno/lab-regex/arbol/informes/informe-2024-02.txt
+```
+
+
+```bash
+locate --regex '/informe-(2023|2024)-0[1-6]\.(txt|pdf)$'
+```
+
+_Resultado:_
+
+```text
+/home/alumno/lab-regex/arbol/informes/informe-2023-01.txt
+/home/alumno/lab-regex/arbol/informes/informe-2023-02.txt
+/home/alumno/lab-regex/arbol/informes/informe-2024-01.txt
+/home/alumno/lab-regex/arbol/informes/informe-2024-02.pdf
+/home/alumno/lab-regex/arbol/informes/informe-2024-02.txt
+```
+
+
+> 🧪 En el entorno virtual la base de datos de `locate` **ya está construida** (se hizo `updatedb` al preparar la imagen), por eso estos comandos funcionan sin más. En tu Ubuntu real, si el fichero es nuevo, primero necesitas `sudo updatedb`; lo verás en un ejercicio. Prueba también `locate -c passwd`: el número que te salga dependerá de **tu** disco.
 
 Y los buscadores de **programas** (104.7):
 
@@ -1060,33 +1086,53 @@ arbol/scripts/deploy.sh
 
 #### 🟢 Ejercicio 15.30 · `locate` con regex
 
-Escribe (sin ejecutarlo) la orden de `locate` que muestre las rutas que **acaben en `.conf`**, con regex **básica**, y otra con regex **extendida**.
+Escribe la orden de `locate` que muestre las rutas de los **scripts `.sh`** de la carpeta `arbol`, con regex **básica** y con regex **extendida**.
 
 <details>
 <summary>💡 Ver solución</summary>
 
 
-```text
-locate -r '\.conf$'
-locate --regex '\.conf$'
+```bash
+locate -r '/arbol/.*\.sh$'
+# Otra forma equivalente:
+locate --regex '/arbol/.*\.sh$'
 ```
 
-`-r` = regex básica (BRE); `--regex` = extendida (ERE). Como `locate` mira la **ruta completa**, el `$` ancla el final.
+_Resultado:_
+
+```text
+/home/alumno/lab-regex/arbol/scripts/backup.sh
+/home/alumno/lab-regex/arbol/scripts/deploy.sh
+```
+
+
+`-r` = regex básica (BRE); `--regex` = extendida (ERE). Como `locate` mira la **ruta completa**, el `$` ancla el final. (Aquí las dos coinciden porque la regex no usa ningún símbolo que cambie entre BRE y ERE.)
 </details>
 
 
 #### 🟢 Ejercicio 15.31 · Actualizar la base de datos
 
-Acabas de crear un fichero y `locate` no lo encuentra. ¿Qué haces?
+Acabas de crear un fichero y `locate` no lo encuentra. ¿Qué haces? Compruébalo: crea `nuevo-fichero.txt`, búscalo con `locate`, actualiza la base de datos y vuelve a buscarlo.
 
 <details>
 <summary>💡 Ver solución</summary>
 
 
-```text
+```bash
+touch nuevo-fichero.txt
+locate nuevo-fichero.txt || echo "(locate no lo encuentra todavía)"
 sudo updatedb
-locate nombre-del-fichero
+locate nuevo-fichero.txt
+rm nuevo-fichero.txt ; sudo updatedb    # limpiamos y dejamos la base como estaba
 ```
+
+_Resultado:_
+
+```text
+(locate no lo encuentra todavía)
+/home/alumno/lab-regex/nuevo-fichero.txt
+```
+
 
 `locate` usa una base de datos que se actualiza con `updatedb` (normalmente una vez al día, por `cron`). `find` no tiene ese problema porque mira el disco en vivo.
 </details>
@@ -1100,13 +1146,24 @@ Explica la diferencia entre `which grep`, `type grep` y `whereis grep`.
 <summary>💡 Ver solución</summary>
 
 
-```text
-which grep      →  /usr/bin/grep                          (el ejecutable que se lanzaría)
-type grep       →  grep is aliased to `grep --color=auto'  (alias, función, builtin o fichero)
-whereis grep    →  grep: /usr/bin/grep /usr/share/man/man1/grep.1.gz   (binario + manual)
+```bash
+which grep
+type grep
+type cd
+whereis grep
 ```
 
-`type` es de la shell y conoce **alias y funciones**; `which` solo mira `$PATH`; `whereis` también localiza el **manual**.
+_Resultado:_
+
+```text
+/usr/bin/grep
+grep is /usr/bin/grep
+cd is a shell builtin
+grep: /usr/bin/grep /usr/share/man/man1/grep.1.gz /usr/share/info/grep.info.gz
+```
+
+
+`which` solo mira `$PATH` y da **el ejecutable que se lanzaría**; `type` es de la shell y conoce también **alias, funciones y *builtins*** (`cd` no es un fichero: es una orden interna de bash); `whereis` además localiza el **manual** (y el *info*). *(En tu terminal interactiva `grep` suele ser un alias definido en `~/.bashrc`; entonces `type grep` diría «grep is aliased to \`grep --color=auto'».)*
 </details>
 
 

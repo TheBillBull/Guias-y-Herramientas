@@ -1,0 +1,6 @@
+# Saltos de línea Unix (LF) siempre, también si clonas en Windows.
+# Si no, los scripts y los ficheros de práctica de la guía de regex/grep
+# fallarían dentro del contenedor de Linux ("bad interpreter", "\r" por todas partes).
+*.sh                                          text eol=lf
+guias/regex-grep-lpic1/laboratorio/**         text eol=lf
+guias/regex-grep-lpic1/entorno-virtual/**     text eol=lf

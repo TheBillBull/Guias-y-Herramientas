@@ -255,22 +255,31 @@ entrada:hola
 | `--exclude='*.log'` | se salta esos ficheros |
 | `--exclude-dir=ssh` | se salta esas carpetas |
 
+> 📌 Desde aquí, los comandos que recorren todo `/etc` llevan `2>/dev/null | sort`: lo primero esconde los *"Permission denied"* de los ficheros que solo lee `root`, y lo segundo ordena el resultado (el orden en que `-r` recorre el disco no está garantizado y cambia de un ordenador a otro).
+
 ```bash
-grep -rl --include='*.conf' . /etc
+grep -rl --include='*.conf' . /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
 
 ```text
-/etc/resolv.conf
-/etc/nsswitch.conf
+/etc/adduser.conf
+/etc/ca-certificates.conf
+/etc/debconf.conf
+/etc/deluser.conf
+/etc/e2scrub.conf
+/etc/gai.conf
+/etc/host.conf
+/etc/ld.so.conf
+… (y 32 líneas más)
 ```
 
 
-(Todos los `.conf` de `/etc`. Usamos el patrón `.` = "cualquier línea" solo para que liste los ficheros.)
+(Todos los `.conf` legibles de `/etc`; el libro enseña solo los 8 primeros porque la lista es larga. Usamos el patrón `.` = "cualquier línea" solo para que liste los ficheros.)
 
 ```bash
-grep -rl --exclude-dir=ssh --exclude='*.yaml' alumno /etc
+grep -rl --exclude-dir=ssh --exclude='*.yaml' alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
@@ -284,15 +293,15 @@ _Resultado:_
 Ficheros que mencionan `alumno`, **sin** mirar en la carpeta `ssh` ni en los `.yaml`. Y contando por fichero:
 
 ```bash
-grep -rc alumno /etc | grep -v ':0$'
+grep -rc alumno /etc 2>/dev/null | grep -v ':0$' | sort
 ```
 
 _Resultado:_
 
 ```text
-/etc/ssh/sshd_config:1
 /etc/group:10
 /etc/passwd:1
+/etc/ssh/sshd_config:1
 ```
 
 
@@ -428,6 +437,8 @@ daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
 ```
 
+
+> 🚰 **¿Quieres la fontanería completa?** El [capítulo 17](17-tuberias-y-redirecciones.md) está dedicado a esto (LPIC 103.4): el **orden** de `2>&1`, `<`, `<<` y `<<<`, `xargs`, `$( )`, `<( )`, códigos de salida de una tubería, la trampa de `sort f > f`… Puedes leerlo ahora o cuando te topes con alguna `|` rara.
 
 ---
 
@@ -713,17 +724,26 @@ Lista los ficheros acabados en `.conf` de `/etc` que contengan la palabra `local
 
 
 ```bash
-grep -rlE --include='*.conf' 'localhost|files' /etc
+grep -rlE --include='*.conf' 'localhost|files' /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
 
 ```text
+/etc/adduser.conf
+/etc/ca-certificates.conf
+/etc/deluser.conf
 /etc/nsswitch.conf
+/etc/security/faillock.conf
+/etc/security/limits.conf
+/etc/security/pam_env.conf
+/etc/sudo.conf
+/etc/sudo_logsrvd.conf
+/etc/sysctl.d/10-kernel-hardening.conf
 ```
 
 
-`--include='*.conf'` filtra por nombre (con comodín, entre comillas) y el patrón `localhost|files` es una regex ERE.
+`--include='*.conf'` filtra por nombre (con comodín, entre comillas) y el patrón `localhost|files` es una regex ERE. (`2>/dev/null | sort`: sin "Permission denied" y en orden alfabético.)
 </details>
 
 
@@ -736,7 +756,7 @@ Lista los ficheros de `/etc` que mencionan `alumno`, **sin** mirar dentro de la 
 
 
 ```bash
-grep -rl --exclude-dir=ssh alumno /etc
+grep -rl --exclude-dir=ssh alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
@@ -758,18 +778,25 @@ Lista los ficheros `.conf` de `/etc` en los que **no** aparece `alumno`.
 
 
 ```bash
-grep -rL --include='*.conf' alumno /etc
+grep -rL --include='*.conf' alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
 
 ```text
-/etc/resolv.conf
-/etc/nsswitch.conf
+/etc/adduser.conf
+/etc/ca-certificates.conf
+/etc/debconf.conf
+/etc/deluser.conf
+/etc/e2scrub.conf
+/etc/gai.conf
+/etc/host.conf
+/etc/ld.so.conf
+… (y 32 líneas más)
 ```
 
 
-`-L` es lo contrario de `-l`.
+`-L` es lo contrario de `-l`. (La lista es larga: casi ningún `.conf` menciona a `alumno`. El libro enseña solo las 8 primeras líneas.)
 </details>
 
 
@@ -1164,7 +1191,7 @@ _Resultado:_
 | `-a` / `-I` | tratar binarios como texto / ignorarlos |
 | `--color=always` | color aunque no sea pantalla |
 
-**Canales:** `stdin` (0), `stdout` (1), `stderr` (2). `>` sobrescribe, `>>` añade, `2>` errores, `2>/dev/null` tira los errores, `|` conecta, `tee` guarda y deja pasar.
+**Canales:** `stdin` (0), `stdout` (1), `stderr` (2). `>` sobrescribe, `>>` añade, `2>` errores, `2>/dev/null` tira los errores, `|` conecta, `tee` guarda y deja pasar. (Todo esto a fondo en el [capítulo 17](17-tuberias-y-redirecciones.md).)
 
 ➡️ **Siguiente parada:** [Capítulo 10](10-ficheros-del-sistema.md): ahora sí, a **trabajar con `/etc/passwd`, `/etc/group`** y otros ficheros del sistema con todo lo aprendido.
 

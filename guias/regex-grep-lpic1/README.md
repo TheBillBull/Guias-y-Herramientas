@@ -1,12 +1,29 @@
 # 🐧 Expresiones regulares y `grep` — de cero a *master* (LPIC-1)
 
-> Una guía **paso a paso, como para un niño que ve una terminal por primera vez**, que termina con ejercicios de nivel experto. **593 ejercicios** con la solución escondida y la **salida real** de cada comando, más un mini-examen de 30 preguntas tipo LPIC-1.
+> Una guía **paso a paso, como para un niño que ve una terminal por primera vez**, que termina con ejercicios de nivel experto. **630 ejercicios** con la solución escondida y la **salida real** de cada comando, más 38 preguntas tipo test de LPIC-1. Incluye un **ordenador virtual** (Docker) para que **tus salidas sean idénticas a las del libro**.
 
-Los comandos de este libro que se pueden ejecutar sin interacción (la inmensa mayoría) **se ejecutaron de verdad** (GNU `grep` 3.11, Ubuntu 24.04) y lo que ves como resultado es lo que salió, no lo que "debería" salir. Cuando algo falla o sorprende (y pasa a menudo), el libro lo cuenta. Solo hay dos clases de ejemplos que **no** se ejecutaron: los **interactivos** (`less`, `man`, `vi` a pantalla completa; de `vi` se verificaron sus órdenes `:s` y `:g` mediante `ex`) y los que **dependen de tu máquina** (`locate`, `journalctl`, `which`…). Van en bloques sin "Resultado".
+Los comandos de este libro que se pueden ejecutar sin interacción (la inmensa mayoría) **se ejecutaron de verdad** dentro del [ordenador virtual](entorno-virtual/README.md) (Ubuntu 24.04, GNU `grep` 3.11) y lo que ves como resultado es lo que salió, no lo que "debería" salir. Cuando algo falla o sorprende (y pasa a menudo), el libro lo cuenta. Solo hay dos clases de ejemplos que **no** se ejecutaron: los **interactivos** (`less`, `man`, `vi` a pantalla completa; de `vi` se verificaron sus órdenes `:s` y `:g` mediante `ex`) y los de `journalctl` (el diario de `systemd` no existe en un contenedor). Van en bloques sin "Resultado".
 
 ---
 
 ## 🚀 Empieza aquí
+
+Hay **dos caminos**. Elige uno:
+
+### 🐳 Camino A · El ordenador virtual (recomendado)
+
+Un Ubuntu 24.04 "de usar y tirar" dentro de Docker, con **los mismos `/etc/passwd`, logs y `grep` que se usaron para escribir el libro**. Así **tu pantalla y el libro coinciden letra por letra** y puedes destrozar lo que quieras sin riesgo.
+
+```bash
+git clone -b claude/que-puedo-hacer-834z1j https://github.com/TheBillBull/Guias-y-Herramientas.git
+cd Guias-y-Herramientas/guias/regex-grep-lpic1/entorno-virtual
+bash construir.sh      # una sola vez (unos minutos; necesita Docker)
+bash entrar.sh         # ¡dentro! ya estás en ~/lab-regex
+```
+
+Instalar Docker, qué es real y qué simulado, problemas frecuentes → [**entorno-virtual/README.md**](entorno-virtual/README.md).
+
+### 🐧 Camino B · Directamente en tu Ubuntu
 
 Necesitas un **Ubuntu** (o cualquier Linux con GNU `grep`) y una terminal (`Ctrl`+`Alt`+`T`).
 
@@ -22,6 +39,8 @@ bash ~/Guias-y-Herramientas/guias/regex-grep-lpic1/laboratorio/preparar-laborato
 cd ~/lab-regex
 ls
 ```
+
+Los ejercicios con ficheros de `~/lab-regex` darán lo mismo que el libro; los que usan **tu** `/etc/passwd` o **tus** logs darán algo parecido pero con tus datos.
 
 > 📝 La parte `-b claude/que-puedo-hacer-834z1j` elige la rama donde está la guía. Cuando esté en la rama principal bastará `git clone https://github.com/TheBillBull/Guias-y-Herramientas.git`.
 >
@@ -52,6 +71,7 @@ Luego sigue los capítulos **en orden**: cada uno se apoya en el anterior.
 | 14 | [`sed` y los filtros](14-sed-y-filtros.md) | 56 | Sustituir, reordenar, borrar; `cut` `sort` `uniq` `tr` `wc` |
 | 15 | [`vi`, `less`, `find`, `locate`](15-vi-find-locate.md) | 34 | Regex fuera de `grep`; `find -regex`; `bash [[ =~ ]]` |
 | 16 | [El jefe final](16-retos-finales.md) | 33 + 30 | 4 misiones de investigación, retos y mini-examen tipo test |
+| 17 | [🚰 La fontanería: flujos, tuberías y redirecciones](17-tuberias-y-redirecciones.md) | 37 + 8 | `>` `>>` `2>` `2>&1` `<` `<<` `<<<`, `tee`, `xargs`, `$( )`, `<( )`, `&&` `\|\|`, códigos de salida de una tubería. **LPIC 103.4** *(léelo a partir del cap. 9)* |
 | — | [📄 Chuleta de una página](chuleta.md) | | Todo resumido para repasar |
 
 ⭐ = los ejercicios propuestos por tu profesor, resueltos paso a paso:
@@ -91,10 +111,11 @@ Siempre que se puede, los ejercicios buscan **una sola orden**, aunque sea larga
 
 ## 🔬 Sobre los datos del libro
 
-- Los ejercicios usan los ficheros **reales** de Ubuntu (`/etc/passwd`, `/var/log/syslog`…), tal y como los escribirás tú.
-- Pero **tu `/etc/passwd` no es igual que el mío**. Para que las salidas del libro sean siempre idénticas, se generaron con **copias de ejemplo** de esos ficheros, incluidas en `laboratorio/datos/sistema/`. Tu salida será *parecida*, con otros usuarios, fechas o números.
-- Si quieres que te salga **exactamente igual que en el libro**, usa la copia: `grep root ~/lab-regex/sistema/etc/passwd`.
-- Otros ficheros de práctica (`ips.txt`, `correos.txt`, `palabras.txt`, `dominios.txt`…) son **idénticos** en tu laboratorio y en el libro.
+- Los ejercicios usan los ficheros **reales** de Ubuntu (`/etc/passwd`, `/var/log/syslog`…), con sus **rutas reales**.
+- Pero **tu `/etc/passwd` no es igual que el mío**. Para que las salidas del libro sean siempre idénticas, se generaron con **copias de ejemplo** de esos ficheros, incluidas en `laboratorio/datos/sistema/`.
+- 🐳 **En el ordenador virtual (Camino A)** esas copias *son* `/etc/passwd`, `/etc/group`, `/var/log/syslog`…: tu salida es **idéntica** a la del libro. Compruébalo con `bash entrar.sh comprobar`.
+- 🐧 **En tu propio Ubuntu (Camino B)** tu salida será *parecida*, con otros usuarios, fechas o números. Si quieres que te salga **exactamente igual que en el libro**, usa la copia: `grep root ~/lab-regex/sistema/etc/passwd`.
+- Otros ficheros de práctica (`ips.txt`, `correos.txt`, `palabras.txt`, `dominios.txt`…) son **idénticos** en los dos caminos.
 - Algunos logs (`syslog`, `auth.log`, `ufw.log`, `dpkg.log`, `access.log`) son **sintéticos**: ficticios pero realistas.
 
 ### ⚠️ Versiones y diferencias que conviene saber
@@ -104,6 +125,7 @@ Siempre que se puede, los ejercicios buscan **una sola orden**, aunque sea larga
 | **`grep` 3.11** (Ubuntu 24.04) | Las salidas se generaron con esta versión. En Ubuntu 22.04 (`grep` 3.7) casi todo es idéntico; los mensajes de error pueden diferir ligeramente. |
 | **`[a-z]` y el idioma** | En `en_US.UTF-8`/`es_ES.UTF-8` el rango puede incluir letras con tilde; las salidas del libro se generaron en `C.UTF-8`. El [capítulo 4](04-corchetes.md) lo explica con pruebas. |
 | **`egrep` / `fgrep`** | En otras distribuciones con `grep` ≥ 3.8 imprimen un aviso de "obsoleto"; en Ubuntu 24.04 no. |
+| **Idioma de los mensajes** | El ordenador virtual usa `C.UTF-8`: los errores salen en inglés (`No such file or directory`). En un Ubuntu en español dirán «No existe el fichero o el directorio». |
 | **`less`** | En Ubuntu 24.04 acepta regex extendidas (comprobado), pero depende de cómo se compile. |
 | **`grep -P`** | Existe en GNU `grep` (Linux), no en el de macOS ni en BusyBox. Fuera del examen LPIC-1. |
 
@@ -115,7 +137,7 @@ Siempre que se puede, los ejercicios buscan **una sola orden**, aunque sea larga
 |---|---|
 | **Una semana** | Un capítulo al día (0–7), repasando el anterior. Fin de semana: 8, 9 y la chuleta. |
 | **Un mes** | Capítulos 0–9 en dos semanas (los ejercicios 🟢🟡 de cada uno); semana 3: 10–12; semana 4: 13–16. |
-| **Prisa por el examen LPIC-1** | Capítulos **2, 3, 4, 5, 6, 8, 9, 14, 15** y el mini-examen del 16. Los capítulos 13 y 12 son "extra" (`-P` no entra). |
+| **Prisa por el examen LPIC-1** | Capítulos **2, 3, 4, 5, 6, 8, 9, 14, 15, 17** y el mini-examen del 16. Los capítulos 13 y 12 son "extra" (`-P` no entra). |
 
 **Trucos para aprender:** haz los ejercicios **sin mirar**; vuelve a hacerlos días después; cuando una solución te sorprenda, **cámbiala** y mira qué se rompe; usa `man grep` y `man 7 regex` como libros de consulta.
 
@@ -128,7 +150,7 @@ Siempre que se puede, los ejercicios buscan **una sola orden**, aunque sea larga
 | 103.1 Trabajar en la línea de comandos | 0, 1 |
 | 103.2 Procesar flujos de texto con filtros | 9, 14 |
 | 103.3 Gestión básica de ficheros (comodines) | 2 |
-| 103.4 Flujos, tuberías y redirecciones | 0, 9, 11 |
+| **103.4 Flujos, tuberías y redirecciones** | 0, 9, **17** |
 | **103.7 Buscar en ficheros con expresiones regulares** | **1–8, 10–13** |
 | 103.8 Edición básica con `vi` | 15 |
 | 104.7 Buscar ficheros (`find`, `locate`, `whereis`…) | 15 |
@@ -141,10 +163,15 @@ Siempre que se puede, los ejercicios buscan **una sola orden**, aunque sea larga
 ```text
 guias/regex-grep-lpic1/
 ├── README.md                 ← este índice
-├── 00-…16-*.md               ← los 17 capítulos
+├── 00-…17-*.md               ← los 18 capítulos
 ├── chuleta.md                ← resumen de una página
+├── entorno-virtual/          ← el ordenador virtual (Docker)
+│   ├── README.md             ← instalación, uso, qué es real y qué simulado
+│   ├── Dockerfile
+│   ├── construir.sh · entrar.sh
+│   └── scripts/              ← preparación de la imagen y comprobación
 └── laboratorio/
-    ├── preparar-laboratorio.sh   ← crea ~/lab-regex
+    ├── preparar-laboratorio.sh   ← crea ~/lab-regex (Camino B; la imagen lo usa también)
     └── datos/                    ← ficheros de práctica
         ├── *.txt, *.csv, *.conf, *.py
         ├── salidas/              ← salidas simuladas (ip a, df, ps…)

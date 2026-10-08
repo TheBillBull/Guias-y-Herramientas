@@ -4,7 +4,7 @@
 >
 > 📘 **LPIC-1:** 103.7 (regex) + 107.1 (usuarios y grupos) + 104.3 (`/etc/fstab`) + 109.1 (`/etc/hosts`, `/etc/services`) — son ficheros que **salen en el examen**.
 >
-> 🧪 Estos comandos trabajan sobre ficheros **reales** (`/etc/passwd`…). Las salidas del libro vienen de la copia de ejemplo; en tu máquina cambiarán nombres y números, pero **el filtro es el mismo**.
+> 🧪 Estos comandos trabajan sobre ficheros **reales** (`/etc/passwd`…). Las salidas del libro vienen de la copia de ejemplo: en el [ordenador virtual](entorno-virtual/README.md) te saldrán **idénticas**; en tu propio Ubuntu cambiarán nombres y números, pero **el filtro es el mismo**.
 
 ---
 
@@ -862,7 +862,7 @@ grep -cE '^[^:]*:[^:]*:[0-9]{1,3}:' /etc/group
 _Resultado:_
 
 ```text
-50
+51
 ```
 
 </details>
@@ -916,7 +916,7 @@ grep -c ':$' /etc/group
 _Resultado:_
 
 ```text
-45
+46
 ```
 
 </details>

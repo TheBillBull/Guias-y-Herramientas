@@ -6,7 +6,7 @@ Guías de estudio prácticas en español, pensadas para aprender **haciendo**.
 
 | Guía | Descripción |
 |---|---|
-| [🐧 Expresiones regulares y `grep` (LPIC-1)](guias/regex-grep-lpic1/README.md) | De cero a *master*: **593 ejercicios** con salida real verificada, un laboratorio de prácticas listo para montar con un script y un mini-examen tipo LPIC-1. Explicado paso a paso, desde "qué es una terminal" hasta `grep -P`, `sed` y `find -regex`. |
+| [🐧 Expresiones regulares y `grep` (LPIC-1)](guias/regex-grep-lpic1/README.md) | De cero a *master*: **630 ejercicios** con salida real verificada, un **ordenador virtual** (Docker) para que tus resultados coincidan con los del libro, un laboratorio de prácticas y preguntas tipo test de LPIC-1. Explicado paso a paso, desde "qué es una terminal" hasta `grep -P`, `sed`, `find -regex` y tuberías/redirecciones. |
 
 ## Cómo empezar
 

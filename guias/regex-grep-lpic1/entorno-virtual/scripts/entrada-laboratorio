@@ -1,0 +1,4 @@
+#!/bin/bash
+# Punto de entrada del contenedor: prepara los ficheros "vivos" y lanza la orden.
+sudo -n /usr/local/sbin/aplicar-ficheros-vivos 2>/dev/null || true
+exec "$@"

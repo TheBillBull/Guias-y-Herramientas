@@ -177,14 +177,34 @@ sed '2i\texto' f               insertar antes de la 2
 sed -n '$=' f                  contar líneas
 ```
 
-## 12 · Mapa del examen LPIC-1
+## 12 · Tuberías y redirecciones ([cap. 17](17-tuberias-y-redirecciones.md))
+
+| Quiero… | Escribo |
+|---|---|
+| guardar la salida (pisa) / añadir | `cmd > f` / `cmd >> f` |
+| guardar los errores | `cmd 2> f` / `cmd 2>> f` |
+| tirar la salida / los errores | `cmd > /dev/null` / `cmd 2> /dev/null` |
+| **todo** al mismo sitio | `cmd > f 2>&1` · `cmd &> f` |
+| leer de un fichero | `cmd < f` |
+| pasar un texto | `cmd <<< 'texto'` · `cmd <<'FIN' … FIN` |
+| encadenar (solo `stdout`) / con errores | `a \| b` / `a \|& b` (`a 2>&1 \| b`) |
+| guardar y seguir | `a \| tee f \| b` (`-a` añade) |
+| lista → argumentos | `a \| xargs b` · `xargs -0` con `find -print0` · `b $(a)` |
+| salida como si fuera un fichero | `diff <(a) <(b)` |
+| solo si salió bien / mal | `a && b` / `a \|\| b` |
+
+**Trampas:** `sort f > f` deja `f` **vacío** · `2>&1 > f` ≠ `> f 2>&1` (el orden importa) · `$?` de una tubería es el del **último** (`${PIPESTATUS[@]}`) · un `while read` tras `\|` corre en un subshell · `sudo cmd > f` no da permisos a `>` (usa `\| sudo tee f`).
+
+---
+
+## 13 · Mapa del examen LPIC-1
 
 | Objetivo | Qué entra |
 |---|---|
 | **103.1** línea de comandos | `echo`, `history`, `man`, `which`, `type`, variables |
 | **103.2** filtros | `cat` `cut` `head` `tail` `nl` `paste` `join` `sort` `uniq` `tr` `wc` `sed` `split` `od` `md5sum`… |
 | **103.3** gestión de ficheros | comodines (`*` `?` `[ ]`), `cp` `mv` `rm` `find` |
-| **103.4** flujos y tuberías | `>` `>>` `2>` `<` `\|` `tee` `xargs` |
+| **103.4** flujos y tuberías | `>` `>>` `2>` `2>&1` `<` `<<` `\|` `tee` `xargs` (→ [cap. 17](17-tuberias-y-redirecciones.md)) |
 | **103.7** regex | BRE vs ERE, `grep` `egrep` `fgrep` `sed`, clases, cuantificadores, anclas |
 | **103.8** `vi` | modos, `/`, `:s`, `:g`, `:wq`, `:q!` |
 | **104.7** buscar ficheros | `find` `locate` `updatedb` `whereis` `which` `type` |

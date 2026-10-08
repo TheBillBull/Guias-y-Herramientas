@@ -433,40 +433,68 @@ usuarios.«csv»
 ¿Y si no sabes en **qué** fichero está lo que buscas? Con **`-r`** (*recursive*), `grep` mira dentro de **todos los ficheros de una carpeta y de sus subcarpetas**:
 
 ```bash
-grep -rl alumno /etc
+grep -rl alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
 
 ```text
-/etc/ssh/sshd_config
 /etc/group
 /etc/passwd
+/etc/ssh/sshd_config
 ```
 
 
-(Con `-l` solo nos da la lista de ficheros que contienen `alumno`.) Sin `-l`:
+(Con `-l` solo nos da la lista de ficheros que contienen `alumno`. Lo de después del `grep` son dos trucos que aprenderás enseguida: **`2>/dev/null`** esconde los errores y **`| sort`** ordena la lista. Más abajo te explico por qué hacen falta.) Sin `-l`:
 
 ```bash
-grep -r alumno /etc
+grep -r alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado_ (coincidencias entre « »):
 
 ```text
-/etc/ssh/sshd_config:AllowUsers «alumno» ana luis
+/etc/group:«alumno»:x:1000:
 /etc/group:adm:x:4:syslog,«alumno»
-/etc/group:dialout:x:20:«alumno»
-/etc/group:cdrom:x:24:«alumno»
-/etc/group:floppy:x:25:«alumno»
-/etc/group:sudo:x:27:«alumno»,ana
 /etc/group:audio:x:29:«alumno»
+/etc/group:cdrom:x:24:«alumno»
+/etc/group:dialout:x:20:«alumno»
 /etc/group:dip:x:30:«alumno»
-… (y 4 líneas más)
+/etc/group:floppy:x:25:«alumno»
+/etc/group:plugdev:x:46:«alumno»,usbmux
+/etc/group:sudo:x:27:«alumno»,ana
+/etc/group:video:x:44:«alumno»
+/etc/passwd:«alumno»:x:1000:1000:Alumno Linux,,,:/home/«alumno»:/bin/bash
+/etc/ssh/sshd_config:AllowUsers «alumno» ana luis
 ```
 
 
-> ⚠️ En tu Ubuntu real, `grep -r algo /etc` te llenará la pantalla de errores *"Permiso denegado"* (hay ficheros que solo puede leer `root`). La solución elegante es **`2>/dev/null`** (esconder los errores) o la opción **`-s`**. Lo vemos en el capítulo 9.
+> ⚠️ **¿Y por qué `2>/dev/null`?** Porque `/etc` tiene ficheros que solo puede leer `root` (como `/etc/shadow`, donde se guardan las contraseñas cifradas). Si pruebas a leerlos como usuario normal, `grep` protesta con un error *"Permission denied"* (en un Ubuntu en español, *"Permiso denegado"*) **por cada uno**. Mira el mismo comando *sin* esconderlos (aquí `2>&1` pega los errores a la salida normal, solo para que podamos verlos y ordenarlos junto con los resultados):
+
+```bash
+grep -rl alumno /etc 2>&1 | sort
+```
+
+_Resultado:_
+
+```text
+/etc/group
+/etc/passwd
+/etc/ssh/sshd_config
+grep: /etc/.pwd.lock: Permission denied
+grep: /etc/gshadow: Permission denied
+grep: /etc/security/opasswd: Permission denied
+grep: /etc/shadow: Permission denied
+grep: /etc/ssl/private: Permission denied
+grep: /etc/sudoers.d/README: Permission denied
+grep: /etc/sudoers.d/laboratorio: Permission denied
+grep: /etc/sudoers: Permission denied
+```
+
+
+Las tres primeras líneas (las que empiezan por `/etc/`) son **resultados**; las que empiezan por `grep:` son **errores**. Los errores no son resultados: por eso los mandamos a `/dev/null` (el "agujero negro" de Linux: lo que entra ahí desaparece). La opción **`-s`** hace algo parecido. Todo esto, con calma, en el capítulo 9 y en el capítulo 17.
+
+> 💡 **¿Y `| sort`?** `-r` recorre las carpetas en el orden en que el disco las guarda, y ese orden **no está garantizado**: puede cambiar de un ordenador a otro. `sort` lo ordena alfabéticamente para que a ti te salga igual que en el libro.
 
 ---
 
@@ -1103,7 +1131,7 @@ _Resultado:_
 
 `-i` y `-c` combinados: `-ic` (o `-ci`, da igual).
 
-En tu Ubuntu real puede que necesites `sudo` o pertenecer al grupo `adm` para leer `/var/log/syslog`. Para practicar con calma usa la copia: `~/lab-regex/sistema/var/log/syslog`.
+En tu Ubuntu real puede que necesites `sudo` o pertenecer al grupo `adm` para leer `/var/log/syslog` (en el ordenador virtual ya puedes). Para practicar con calma usa la copia: `~/lab-regex/sistema/var/log/syslog`.
 </details>
 
 
@@ -1262,19 +1290,19 @@ Lista **solo los nombres** de los ficheros de `/etc` (y subcarpetas) que contien
 
 
 ```bash
-grep -rl alumno /etc
+grep -rl alumno /etc 2>/dev/null | sort
 ```
 
 _Resultado:_
 
 ```text
-/etc/ssh/sshd_config
 /etc/group
 /etc/passwd
+/etc/ssh/sshd_config
 ```
 
 
-`-r` entra en las subcarpetas y `-l` solo da los nombres.
+`-r` entra en las subcarpetas y `-l` solo da los nombres. (`2>/dev/null` esconde los "Permission denied" y `sort` ordena la lista.)
 </details>
 
 

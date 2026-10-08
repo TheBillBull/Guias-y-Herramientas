@@ -1,0 +1,16 @@
+
+# ---- Laboratorio de expresiones regulares -----------------------------------
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias ls='ls --color=auto'
+export HISTSIZE=5000
+cd ~/lab-regex 2>/dev/null
+if [ -z "$LAB_BIENVENIDA" ]; then
+    export LAB_BIENVENIDA=1
+    echo
+    echo "  🧪 Laboratorio de expresiones regulares - Ubuntu 24.04"
+    echo "     Estás en ~/lab-regex. Escribe 'ls' para ver los ficheros."
+    echo "     Si lo estropeas:  preparar-laboratorio   (lo deja como nuevo)"
+    echo
+fi

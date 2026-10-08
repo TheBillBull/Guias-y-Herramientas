@@ -4,7 +4,7 @@
 >
 > 📘 **LPIC-1:** 103.7 + 103.2 (filtros) + 108.2 (registros del sistema).
 >
-> 🧪 Estos ficheros viven en `/var/log`. En tu Ubuntu real algunos necesitan `sudo` o pertenecer al grupo `adm` para leerse. En el laboratorio tienes copias de ejemplo (`~/lab-regex/sistema/var/log/`) y los comandos del libro funcionan con las rutas reales `/var/log/...`.
+> 🧪 Estos ficheros viven en `/var/log`. En el [ordenador virtual](entorno-virtual/README.md) están **con el contenido del libro** (en las rutas reales `/var/log/...`, legibles porque `alumno` pertenece al grupo `adm`). En tu Ubuntu real algunos necesitan `sudo` o pertenecer al grupo `adm` para leerse; para practicar con calma tienes copias de ejemplo en `~/lab-regex/sistema/var/log/`.
 
 ---
 
@@ -31,6 +31,8 @@ journalctl -p err                 # solo errores (prioridad err o peor)
 journalctl --since "1 hour ago"   # la última hora
 journalctl | grep -i 'failed'     # ¡y grep como siempre!
 ```
+
+*(Estos comandos no se muestran con salida: el diario de `systemd` es binario y depende de cada máquina. En el entorno virtual existe solo una simulación mínima de `journalctl` construida a partir del `syslog` de ejemplo.)*
 
 > 🧠 **Para el examen:** `dmesg` muestra los mensajes del **kernel**; `last` los inicios de sesión; `lastb` los **fallidos** (requiere root).
 

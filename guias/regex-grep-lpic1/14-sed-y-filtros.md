@@ -1576,7 +1576,20 @@ azul.
 ```
 
 
-`fold -w 25` corta a 25 columnas; `-s` lo hace en los **espacios** para no partir palabras. (Para **alinear en columnas** existe `column -t`, por ejemplo `column -t -s: /etc/passwd`.)
+`fold -w 25` corta a 25 columnas; `-s` lo hace en los **espacios** para no partir palabras. Para **alinear en columnas** existe `column -t`:
+
+```bash
+column -t -s: /etc/passwd | head -3
+```
+
+_Resultado:_
+
+```text
+root              x  0      0      root                          /root                 /bin/bash
+daemon            x  1      1      daemon                        /usr/sbin             /usr/sbin/nologin
+bin               x  2      2      bin                           /bin                  /usr/sbin/nologin
+```
+
 </details>
 
 
@@ -1609,23 +1622,23 @@ xuniL
 
 #### 🟡 Ejercicio 14.52 · `xargs`: de lista a argumentos
 
-Cuenta las líneas de **cada uno** de los ficheros que contienen la palabra `alumno` en `/etc` (usa `grep -rl` + `xargs wc -l`).
+Cuenta las líneas de **cada uno** de los ficheros que contienen la palabra `alumno` en `/etc` (usa `grep -rl` + `xargs wc -l`; añade `2>/dev/null | sort` para esconder errores y ordenar).
 
 <details>
 <summary>💡 Ver solución</summary>
 
 
 ```bash
-grep -rl alumno /etc | xargs wc -l
+grep -rl alumno /etc 2>/dev/null | sort | xargs wc -l
 ```
 
 _Resultado:_
 
 ```text
-  45 /etc/ssh/sshd_config
-  56 /etc/group
+  57 /etc/group
   41 /etc/passwd
- 142 total
+  45 /etc/ssh/sshd_config
+ 143 total
 ```
 
 

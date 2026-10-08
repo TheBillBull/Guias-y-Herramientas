@@ -1,0 +1,61 @@
+#!/bin/bash
+# Comprueba que el entorno virtual es el que el libro espera.
+# Uso (dentro del contenedor):  comprobar-entorno
+#      (desde fuera)         :  docker run --rm regex-lab comprobar-entorno
+#
+# Si todo sale "OK", las salidas de tu terminal serán idénticas a las del libro.
+
+LAB="$HOME/lab-regex"
+ok=0; mal=0
+
+# comprobar "descripción" valor_obtenido valor_esperado
+comprobar() {
+    if [ "$2" = "$3" ]; then
+        printf '  OK   %s\n' "$1"; ok=$((ok + 1))
+    else
+        printf '  MAL  %s\n         esperado: [%s]\n         obtenido: [%s]\n' "$1" "$3" "$2"; mal=$((mal + 1))
+    fi
+}
+
+echo "Comprobando el entorno virtual del libro..."
+echo
+
+# --- versiones y entorno ---------------------------------------------------
+comprobar "grep es la versión 3.11"        "$(grep --version | sed -n '1s/.* //p')" "3.11"
+comprobar "idioma C.UTF-8 (rangos [a-z])" "${LC_ALL:-$LANG}" "C.UTF-8"
+comprobar "usuario alumno"                 "$(id -un)" "alumno"
+comprobar "el nombre de la máquina es ubuntu-pc" "$(cat /etc/hostname)" "ubuntu-pc"
+
+# --- los ficheros "del sistema" son los mismos que usa el libro -----------
+for f in etc/passwd etc/group etc/os-release etc/fstab etc/shells etc/ssh/sshd_config \
+         var/log/syslog var/log/auth.log var/log/kern.log var/log/dpkg.log \
+         var/log/ufw.log var/log/apache2/access.log; do
+    if [ -r "/$f" ]; then
+        a=$(sha256sum < "/$f"); b=$(sha256sum < "$LAB/sistema/$f")
+    else
+        a="no se puede leer /$f"; b="idéntico"
+    fi
+    comprobar "/$f igual que la copia del libro" "$a" "$b"
+done
+
+# --- unas cuantas respuestas conocidas del libro ---------------------------
+comprobar "líneas de /etc/passwd"          "$(wc -l < /etc/passwd)" "41"
+comprobar "ejercicio del profesor: versión numérica de os-release" \
+          "$(grep -oP '^VERSION="\K[0-9.]+' /etc/os-release)" "24.04.1"
+comprobar "intentos 'Failed password' en auth.log" \
+          "$(grep -c 'Failed password' /var/log/auth.log)" "$(grep -c 'Failed password' "$LAB/sistema/var/log/auth.log")"
+comprobar "usuarios con GID >= 50 (grupo no-sistema)" \
+          "$(awk -F: '$4 >= 50' /etc/passwd | wc -l)" "$(awk -F: '$4 >= 50' "$LAB/sistema/etc/passwd" | wc -l)"
+
+# --- el laboratorio ---------------------------------------------------------
+comprobar "existe ~/lab-regex/ips.txt"     "$([ -f "$LAB/ips.txt" ] && echo si)" "si"
+comprobar "locate conoce la carpeta arbol" "$(locate -c /lab-regex/arbol/informes 2>/dev/null | sed 's/^[1-9][0-9]*$/si/')" "si"
+
+echo
+if [ "$mal" -eq 0 ]; then
+    echo "TODO CORRECTO ($ok comprobaciones). Las salidas del libro serán idénticas a las tuyas."
+else
+    echo "HAY $mal COMPROBACIONES FALLIDAS (y $ok correctas)."
+    echo "Prueba:  preparar-laboratorio   (restablece ~/lab-regex)  o reconstruye la imagen."
+fi
+[ "$mal" -eq 0 ]
