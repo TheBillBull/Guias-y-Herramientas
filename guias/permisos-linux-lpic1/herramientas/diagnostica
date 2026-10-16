@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  diagnostica · ¿por qué un usuario SÍ o NO puede acceder a una ruta?
+#
+#  Recorre la ruta tramo a tramo (/, /home, /home/ana, …) aplicando EXACTAMENTE
+#  el algoritmo de los permisos de Linux (root → dueño → grupo → otros) y te
+#  dice qué tramo bloquea el acceso. Después avisa de lo que esta herramienta
+#  NO evalúa (ACL, atributos, montaje, AppArmor/SELinux).
+#
+#  Para poder mirar carpetas ajenas, ejecútala con sudo:
+#      sudo diagnostica -u carla /home/alumno/lab-permisos/datos/secreto.txt
+# =============================================================================
+LC_ALL=C
+export LC_ALL
+
+uso() {
+cat <<'EOF'
+diagnostica · ¿por qué un usuario SÍ o NO puede acceder a una ruta?
+
+USO
+  diagnostica [-u USUARIO] RUTA
+
+  -u USUARIO   mira el acceso de ese usuario (por defecto, tú)
+  -h           esta ayuda
+
+EJEMPLOS
+  diagnostica /etc/shadow
+  sudo diagnostica -u carla /home/alumno/lab-permisos/datos/secreto.txt
+  sudo diagnostica -u www-data /var/www/html/index.html
+
+Para ver carpetas que no son tuyas ejecútala con sudo.
+EOF
+}
+
+error() { printf 'diagnostica: %s\n' "$*" >&2; exit 1; }
+
+usuario=$(id -un)
+while getopts "u:h" o; do
+  case $o in
+    u) usuario=$OPTARG ;;
+    h) uso; exit 0 ;;
+    *) uso; exit 1 ;;
+  esac
+done
+shift $((OPTIND - 1))
+[[ $# -eq 1 ]] || { uso; exit 1; }
+
+id -u "$usuario" >/dev/null 2>&1 || error "el usuario '$usuario' no existe"
+uid=$(id -u "$usuario")
+gids=" $(id -G "$usuario") "
+grupos=$(id -Gn "$usuario")
+
+dest=$(realpath -m -- "$1")
+[[ -e $dest || -L $dest ]] || printf '⚠  La ruta %s no existe (o no puedo verla desde aquí; prueba con sudo).\n\n' "$dest"
+
+# --- lista de tramos: /, /a, /a/b, … -----------------------------------------
+tramos=("/")
+acc=""
+IFS=/ read -ra partes <<<"${dest#/}"
+for p in "${partes[@]}"; do
+  [[ -z $p ]] && continue
+  acc+="/$p"
+  tramos+=("$acc")
+done
+
+ancho=0
+for t in "${tramos[@]}"; do (( ${#t} > ancho )) && ancho=${#t}; done
+
+letras_trio() {  # 0..7 → rwx
+  local d=$1 s=""
+  (( d & 4 )) && s+=r || s+=-
+  (( d & 2 )) && s+=w || s+=-
+  (( d & 1 )) && s+=x || s+=-
+  printf '%s' "$s"
+}
+
+printf 'Usuario: %s (uid %s)   Grupos: %s\n' "$usuario" "$uid" "$grupos"
+printf 'Ruta:    %s\n\n' "$dest"
+
+n=${#tramos[@]}
+bloqueo=""
+perm_final_r=0 perm_final_w=0 perm_final_x=0
+es_dir_final=0
+tiene_acl=0
+
+printf '  %-*s  %-10s  %-15s  %-6s %-3s  %s\n' "$ancho" "Tramo" "Permisos" "Dueño:Grupo" "Aplica" "rwx" "¿Puede?"
+for (( i=0; i<n; i++ )); do
+  t=${tramos[i]}
+  if ! info=$(stat -c '%a|%u|%g|%U|%G|%A|%F' -- "$t" 2>/dev/null); then
+    printf '  %-*s  (no puedo ver este tramo: ejecuta con sudo)\n' "$ancho" "$t"
+    [[ -z $bloqueo ]] && bloqueo="$t (no visible desde aquí)"
+    continue
+  fi
+  IFS='|' read -r modo ofu ofg onu ong letras tipo <<<"$info"
+  m=$(( 8#$modo ))
+  if (( uid == 0 )); then
+    rol=root; trio=7
+  elif (( uid == ofu )); then
+    rol=dueño; trio=$(( (m >> 6) & 7 ))
+  elif [[ $gids == *" $ofg "* ]]; then
+    rol=grupo; trio=$(( (m >> 3) & 7 ))
+  else
+    rol=otros; trio=$(( m & 7 ))
+  fi
+  r=$(( (trio >> 2) & 1 )); w=$(( (trio >> 1) & 1 )); x=$(( trio & 1 ))
+  es_dir=0; [[ $tipo == directory ]] && es_dir=1
+  # root: ejecutar un fichero exige alguna x
+  if (( uid == 0 && es_dir == 0 )); then (( (m & 0111) )) && x=1 || x=0; fi
+  [[ $(ls -ld -- "$t" 2>/dev/null | cut -c11) == "+" ]] && tiene_acl=1
+
+  if (( i < n - 1 )); then
+    # tramo intermedio: solo importa la x
+    if (( x )); then res="✔ puede atravesarlo"; else res="✘ FALTA x para atravesarlo"; [[ -z $bloqueo ]] && bloqueo="$t  ($rol: $(letras_trio "$trio"))"; fi
+  else
+    es_dir_final=$es_dir
+    perm_final_r=$r; perm_final_w=$w; perm_final_x=$x
+    res="(el objeto final: ver abajo)"
+  fi
+  printf '  %-*s  %-10s  %-15s  %-6s %-3s  %s\n' "$ancho" "$t" "$letras" "$onu:$ong" "$rol" "$(letras_trio "$trio")" "$res"
+done
+
+echo
+if [[ -n $bloqueo ]]; then
+  printf '✘ BLOQUEO en: %s\n' "$bloqueo"
+  printf '  Sin poder atravesar ese tramo, %s no llega al objeto: NO puede hacer nada con él.\n' "$usuario"
+  printf '  Remedio: dar la x que falta en esa carpeta (chmod o+x / g+x, o añadir al usuario al grupo).\n'
+else
+  if (( es_dir_final )); then
+    a1="listar (r)"; a2="crear/borrar dentro (w)"; a3="entrar (x)"
+  else
+    a1="leer (r)"; a2="escribir (w)"; a3="ejecutar (x)"
+  fi
+  mk() { (( $1 )) && printf '✔' || printf '✘'; }
+  printf 'Camino libre hasta el objeto. Sobre %s, %s puede:\n' "$dest" "$usuario"
+  printf '   %s %s\n   %s %s\n   %s %s\n' "$(mk $perm_final_r)" "$a1" "$(mk $perm_final_w)" "$a2" "$(mk $perm_final_x)" "$a3"
+  if (( es_dir_final )) && (( perm_final_w )) && (( ! perm_final_x )); then
+    printf '   (w sin x en una carpeta no sirve para nada)\n'
+  fi
+fi
+
+# --- lo que NO evalúa esta herramienta ----------------------------------------
+echo
+avisos=()
+(( tiene_acl )) && avisos+=("hay una ACL en el camino (un '+' en ls -l): mira con getfacl")
+atr=$(lsattr -d -- "$dest" 2>/dev/null | cut -c1-20)
+if [[ -n $atr ]]; then
+  [[ ${atr:4:1} == i ]] && avisos+=("el objeto es INMUTABLE (chattr +i): nadie lo modifica ni borra, ni root")
+  [[ ${atr:5:1} == a ]] && avisos+=("el objeto es SOLO-AÑADIR (chattr +a)")
+fi
+opts=$(findmnt -T "$dest" -no OPTIONS 2>/dev/null)
+if [[ -n $opts ]]; then
+  [[ ,$opts, == *,ro,* ]]     && avisos+=("partición montada SOLO LECTURA (ro)")
+  [[ ,$opts, == *,noexec,* ]] && avisos+=("partición montada noexec: no se ejecuta nada")
+  [[ ,$opts, == *,nosuid,* ]] && avisos+=("partición montada nosuid: SUID/SGID ignorados")
+fi
+if (( ${#avisos[@]} )); then
+  echo "⚠ Ojo: esta herramienta NO aplica esto al veredicto, pero puede cambiarlo:"
+  for a in "${avisos[@]}"; do echo "   · $a"; done
+else
+  echo "Sin avisos de ACL, atributos inmutables ni opciones de montaje restrictivas."
+fi
+echo "(Recuerda además el MAC —AppArmor/SELinux— y que los grupos nuevos exigen volver a iniciar sesión.)"
