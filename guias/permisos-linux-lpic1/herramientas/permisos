@@ -1,0 +1,274 @@
+#!/usr/bin/env bash
+# =============================================================================
+#  permisos · traductor de permisos de Linux
+#  octal ⇄ letras (ls -l) ⇄ binario ⇄ decimal ⇄ hexadecimal, umask y chmod
+#
+#  No necesita nada más que bash y las coreutils (chmod, stat, mktemp).
+#  Las expresiones de chmod se evalúan con el chmod REAL, así que el resultado
+#  es exactamente el que obtendrías de verdad.
+# =============================================================================
+LC_ALL=C
+export LC_ALL
+
+uso() {
+cat <<'EOF'
+permisos · traductor de permisos de Linux
+
+USO
+  permisos 755                octal (3 o 4 cifras: 755, 644, 4755, 1777…)
+  permisos rwxr-xr-x          letras (9 caracteres; con s S t T si hay bits especiales)
+  permisos -rwxr-xr-x         una línea de "ls -l" (el 1.er carácter es el tipo: - d l …)
+  permisos 0b111101101        binario
+  permisos 0x1ed              hexadecimal
+  permisos d:493              decimal (el "d:" evita confundirlo con un octal)
+  permisos fichero…           los permisos REALES de ficheros o carpetas
+  permisos u=rwx,go=rx        expresión de chmod aplicada a 000
+  permisos 644 g+w,o-r        modo base + expresión de chmod  →  resultado
+  permisos f.sh u+x           (el modo base puede ser un fichero real)
+  permisos -u 027             umask → permisos de los ficheros y carpetas nuevos
+  permisos -u                 (sin número) usa tu umask actual
+  permisos -d …               trata el modo como el de una CARPETA (afecta a la X de chmod)
+  permisos -h                 esta ayuda
+
+EJEMPLOS
+  permisos 4755               ¿qué es un 4755?
+  permisos -rwsr-xr-x         lo mismo, desde las letras
+  permisos /etc/shadow /tmp   permisos reales
+  permisos 640 u+x,g=rw       qué dejaría "chmod u+x,g=rw" sobre un 640
+EOF
+}
+
+ES_DIR=0
+BITS=(256 128 64 32 16 8 4 2 1)
+
+error() { printf 'permisos: %s\n' "$*" >&2; exit 1; }
+
+# entero (0..4095) → "rwxr-xr-x" (con s S t T)
+letras() {
+  local m=$1 s="" i
+  local ch=(r w x r w x r w x)
+  for i in 0 1 2 3 4 5 6 7 8; do
+    if (( m & BITS[i] )); then s+=${ch[i]}; else s+=-; fi
+  done
+  if (( m & 04000 )); then if [[ ${s:2:1} == x ]]; then s=${s:0:2}s${s:3}; else s=${s:0:2}S${s:3}; fi; fi
+  if (( m & 02000 )); then if [[ ${s:5:1} == x ]]; then s=${s:0:5}s${s:6}; else s=${s:0:5}S${s:6}; fi; fi
+  if (( m & 01000 )); then if [[ ${s:8:1} == x ]]; then s=${s:0:8}t; else s=${s:0:8}T; fi; fi
+  printf '%s' "$s"
+}
+
+# "rwxr-xr-x" → entero (devuelve 1 si no son letras válidas)
+de_letras() {
+  local s=$1 m=0 i c
+  [[ $s =~ ^[-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xtT]$ ]] || return 1
+  for i in 0 1 2 3 4 5 6 7 8; do
+    c=${s:i:1}
+    case $c in
+      r|w|x) (( m |= BITS[i] )) ;;
+      s) (( m |= BITS[i] )); if (( i == 2 )); then (( m |= 04000 )); else (( m |= 02000 )); fi ;;
+      S) if (( i == 2 )); then (( m |= 04000 )); else (( m |= 02000 )); fi ;;
+      t) (( m |= BITS[i] | 01000 )) ;;
+      T) (( m |= 01000 )) ;;
+    esac
+  done
+  printf '%d' "$m"
+}
+
+# los n bits de v en binario, en grupos de 3
+binario() {
+  local v=$1 n=$2 out="" i
+  for (( i=n-1; i>=0; i-- )); do
+    out+=$(( (v >> i) & 1 ))
+    if (( i % 3 == 0 && i > 0 )); then out+=" "; fi
+  done
+  printf '%s' "$out"
+}
+
+# 0..7 → "leer, escribir…"
+acciones() {
+  local d=$1 dir=$2 t=() out="" x
+  if (( dir )); then
+    (( d & 4 )) && t+=("listar")
+    (( d & 2 )) && t+=("crear/borrar/renombrar dentro")
+    (( d & 1 )) && t+=("entrar")
+  else
+    (( d & 4 )) && t+=("leer")
+    (( d & 2 )) && t+=("escribir")
+    (( d & 1 )) && t+=("ejecutar")
+  fi
+  (( ${#t[@]} )) || { printf 'nada'; return; }
+  for x in "${t[@]}"; do out+="${out:+, }$x"; done
+  printf '%s' "$out"
+}
+
+# modo → u=rwx,g=rx,o=rx (solo la parte rwx)
+simbolico() {
+  local m=$1 out="" c d i
+  local nom=(u g o)
+  for i in 0 1 2; do
+    d=$(( (m >> (6 - 3*i)) & 7 ))
+    c=""
+    (( d & 4 )) && c+=r
+    (( d & 2 )) && c+=w
+    (( d & 1 )) && c+=x
+    out+="${nom[i]}=$c"
+    (( i < 2 )) && out+=","
+  done
+  printf '%s' "$out"
+}
+
+# ------------------------------------------------------------- presentación --
+mostrar() {
+  local m=$1 dir=$2 titulo=${3:-}
+  local esp=$(( (m >> 9) & 7 ))
+  local u=$(( (m >> 6) & 7 )) g=$(( (m >> 3) & 7 )) o=$(( m & 7 ))
+  local oct L tipo='-'
+  if (( esp )); then oct=$(printf '%04o' "$m"); else oct=$(printf '%03o' "$m"); fi
+  L=$(letras "$m")
+  (( dir )) && tipo='d'
+  [[ -n $titulo ]] && printf '%s\n\n' "$titulo"
+  printf '  Octal     %s\n' "$oct"
+  printf '  Letras    %s      (en ls -l: %s%s)\n' "$L" "$tipo" "$L"
+  if (( esp )); then
+    printf '  Binario   %s      (3 bits especiales + 3 × 3)\n' "$(binario "$m" 12)"
+  else
+    printf '  Binario   %s\n' "$(binario "$m" 9)"
+  fi
+  printf '  Decimal   %d\n' "$m"
+  printf '  Hex       0x%x\n' "$m"
+  printf '\n'
+  printf '  dueño   %s  (%d)  %s\n' "${L:0:3}" "$u" "$(acciones "$u" "$dir")"
+  printf '  grupo   %s  (%d)  %s\n' "${L:3:3}" "$g" "$(acciones "$g" "$dir")"
+  printf '  otros   %s  (%d)  %s\n' "${L:6:3}" "$o" "$(acciones "$o" "$dir")"
+  local sp=""
+  if (( esp )); then
+    printf '\n  Bits especiales:\n'
+    if (( esp & 4 )); then
+      printf '    · SUID (4)    se ejecuta con los privilegios del DUEÑO\n'; sp+=",u+s"
+    fi
+    if (( esp & 2 )); then
+      if (( dir )); then printf '    · SGID (2)    lo que se cree dentro hereda el GRUPO de la carpeta\n'
+      else printf '    · SGID (2)    se ejecuta con los privilegios del GRUPO\n'; fi
+      sp+=",g+s"
+    fi
+    if (( esp & 1 )); then
+      if (( dir )); then printf '    · sticky (1)  solo el dueño de cada fichero puede borrarlo\n'
+      else printf '    · sticky (1)  (sin efecto en ficheros normales en Linux)\n'; fi
+      sp+=",+t"
+    fi
+  fi
+  printf '\n  chmod %s FICHERO\n' "$oct"
+  printf '  chmod %s%s FICHERO\n' "$(simbolico "$m")" "$sp"
+}
+
+# ------------------------------------------------------- aplicar a chmod ----
+aplicar() {  # base(entero) expresión dir → entero
+  local base=$1 expr=$2 dir=$3 t f r
+  t=$(mktemp -d) || error "no puedo crear un directorio temporal"
+  if (( dir )); then f="$t/d"; mkdir "$f"; else f="$t/f"; : > "$f"; fi
+  chmod "$(printf '%04o' "$base")" "$f" 2>/dev/null
+  if ! chmod -- "$expr" "$f" 2>/dev/null; then rm -rf "$t"; return 1; fi
+  r=$(stat -c %a "$f")
+  rm -rf "$t"
+  printf '%d' "$(( 8#$r ))"
+}
+
+es_expresion() { [[ $1 =~ ^[ugoa]*[-+=][rwxXstugo]*(,[ugoa]*[-+=][rwxXstugo]*)*$ ]]; }
+
+# reconoce un modo; deja el entero en RES
+reconocer() {
+  local a=$1 s
+  if [[ $a =~ ^[0-7]{1,4}$ ]]; then RES=$(( 8#$a )); return 0; fi
+  if [[ $a =~ ^0[oO]([0-7]+)$ ]]; then RES=$(( 8#${BASH_REMATCH[1]} )); return 0; fi
+  if [[ $a =~ ^0[bB]([01]+)$ ]]; then RES=$(( 2#${BASH_REMATCH[1]} )); return 0; fi
+  if [[ $a =~ ^0[xX]([0-9a-fA-F]+)$ ]]; then RES=$(( 16#${BASH_REMATCH[1]} )); return 0; fi
+  if [[ $a =~ ^[dD]:([0-9]+)$ ]]; then RES=${BASH_REMATCH[1]}; return 0; fi
+  s=$a
+  if [[ ${#s} -eq 10 && ${s:0:1} =~ [-dlcbps] ]]; then
+    [[ ${s:0:1} == d ]] && ES_DIR=1
+    s=${s:1}
+  fi
+  RES=$(de_letras "$s") && return 0
+  return 1
+}
+
+# ------------------------------------------------------------------ umask ---
+modo_umask() {
+  local arg=${1:-} um
+  if [[ -z $arg ]]; then um=$(umask); else um=$arg; fi
+  [[ $um =~ ^[0-7]{1,4}$ ]] || error "umask no válida: $um"
+  local u=$(( 8#$um & 0777 ))
+  local f=$(( 0666 & ~u )) d=$(( 0777 & ~u ))
+  printf 'umask %s%s\n\n' "$(printf '%04o' "$u")" "$([[ -z $arg ]] && echo '  (la tuya ahora mismo)')"
+  printf '  Ficheros nuevos    666 & ~%03o = %03o   %s\n' "$u" "$f" "$(letras "$f")"
+  printf '  Carpetas nuevas    777 & ~%03o = %03o   %s\n' "$u" "$d" "$(letras "$d")"
+  # ¿coincidiría una resta "de cabeza" cifra a cifra?
+  local a b c r1 r2 r3
+  a=$(( 6 - ((u >> 6) & 7) )); b=$(( 6 - ((u >> 3) & 7) )); c=$(( 6 - (u & 7) ))
+  r1=$a; r2=$b; r3=$c
+  if (( a < 0 || b < 0 || c < 0 )); then
+    printf '\n  ⚠  Restar 666 − %03o cifra a cifra da cifras negativas: aquí NO se puede restar.\n' "$u"
+    printf '     La umask es una MÁSCARA (se apagan bits), no una resta.\n'
+  elif (( r1*64 + r2*8 + r3 != f )); then
+    printf '\n  ⚠  Restar 666 − %03o cifra a cifra daría %d%d%d, pero el resultado real es %03o.\n' "$u" "$r1" "$r2" "$r3" "$f"
+    printf '     La umask es una MÁSCARA (se apagan bits), no una resta.\n'
+  fi
+}
+
+# ------------------------------------------------------------------- main ---
+main() {
+  local args=()
+  while (( $# )); do
+    case $1 in
+      -h|--help|--ayuda) uso; return 0 ;;
+      -d|--dir) ES_DIR=1 ;;
+      -u|--umask) shift; modo_umask "${1:-}"; return 0 ;;
+      --) shift; args+=("$@"); break ;;
+      *) args+=("$1") ;;
+    esac
+    shift
+  done
+  (( ${#args[@]} )) || { uso; return 0; }
+
+  local res base
+  # dos argumentos: modo base + expresión de chmod
+  if (( ${#args[@]} == 2 )) && es_expresion "${args[1]}" && [[ ! -e ${args[1]} ]]; then
+    if [[ -e ${args[0]} && ! ${args[0]} =~ ^[0-7]{3,4}$ ]]; then
+      base=$(( 8#$(stat -c %a -- "${args[0]}") )); [[ -d ${args[0]} ]] && ES_DIR=1
+    else
+      reconocer "${args[0]}" || error "no entiendo el modo base: ${args[0]}"
+      base=$RES
+    fi
+    res=$(aplicar "$base" "${args[1]}" "$ES_DIR") || error "expresión de chmod no válida: ${args[1]}"
+    printf 'Base %s  +  chmod %s\n\n' "$(printf '%03o' "$base")" "${args[1]}"
+    mostrar "$res" "$ES_DIR" "Resultado:"
+    if [[ ${args[1]} =~ (^|,)[-+=] ]]; then
+      printf '\n  (Sin u/g/o/a delante, chmod respeta tu umask actual: %s)\n' "$(umask)"
+    fi
+    return 0
+  fi
+
+  local first=1 a m t dir_save
+  for a in "${args[@]}"; do
+    (( first )) || printf '\n────────────────────────────────────────\n\n'
+    first=0
+    # ¿fichero real?
+    if [[ -e $a || -L $a ]] && ! [[ $a =~ ^[0-7]{3,4}$ ]]; then
+      m=$(stat -c %a -- "$a"); t=0; [[ -d $a ]] && t=1
+      mostrar "$(( 8#$m ))" "$t" "$(stat -c '%F: %n   (dueño %U, grupo %G)' -- "$a")"
+      continue
+    fi
+    dir_save=$ES_DIR
+    if reconocer "$a"; then
+      mostrar "$RES" "$ES_DIR" "$a"
+    elif es_expresion "$a"; then
+      res=$(aplicar 0 "$a" "$ES_DIR") || error "expresión de chmod no válida: $a"
+      printf 'chmod %s   aplicado a 000\n\n' "$a"
+      mostrar "$res" "$ES_DIR" "Resultado:"
+    else
+      error "no entiendo '$a' (prueba: permisos -h)"
+    fi
+    ES_DIR=$dir_save
+  done
+}
+
+main "$@"

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrenador de conversión de permisos</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6879; --line: #d9dee6;
+    --accent: #2563eb; --accent-ink: #ffffff; --good: #15803d; --good-bg: #dcfce7; --bad: #b91c1c; --bad-bg: #fee2e2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1116; --panel: #161b22; --ink: #e6edf3; --muted: #9aa7b6; --line: #2d3540;
+      --accent: #5b9cff; --accent-ink: #0b1220; --good: #4ade80; --good-bg: #12301c; --bad: #f87171; --bad-bg: #3a1618;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1116; --panel: #161b22; --ink: #e6edf3; --muted: #9aa7b6; --line: #2d3540;
+    --accent: #5b9cff; --accent-ink: #0b1220; --good: #4ade80; --good-bg: #12301c; --bad: #f87171; --bad-bg: #3a1618;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .modes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .modes label { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: .9rem; user-select: none; }
+  .modes label:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .modes input { position: absolute; opacity: 0; }
+  .modes label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+  .stats div { background: var(--bg); border-radius: 8px; padding: 8px 4px; }
+  .stats b { display: block; font: 700 1.4rem ui-monospace, monospace; }
+  .stats small { color: var(--muted); }
+  .kind { color: var(--muted); font-size: .9rem; margin-bottom: 4px; }
+  .q { font: 700 2rem ui-monospace, monospace; word-break: break-all; margin: 4px 0 12px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  input[type=text] { flex: 1 1 200px; font: 1.3rem ui-monospace, monospace; padding: 10px 12px; border-radius: 8px;
+                     border: 1.5px solid var(--line); background: var(--panel); color: var(--ink); }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 10px 16px; }
+  button.main { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .fb { margin-top: 12px; padding: 10px 12px; border-radius: 8px; display: none; }
+  .fb.ok { display: block; background: var(--good-bg); color: var(--good); }
+  .fb.no { display: block; background: var(--bad-bg); color: var(--bad); }
+  .fb .steps { color: var(--ink); margin-top: 4px; font: .95rem ui-monospace, monospace; white-space: pre-wrap; }
+  .hint { color: var(--muted); font-size: .85rem; margin-top: 8px; }
+  .theme { float: right; }
+  .timer { font: 700 1.2rem ui-monospace, monospace; }
+  .final { text-align: center; padding: 8px; }
+  .final b { font-size: 2rem; display: block; }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="theme" id="theme" type="button" aria-label="Cambiar tema claro/oscuro">🌓</button>
+  <h1>⚡ Entrenador de conversión de permisos</h1>
+  <p class="sub">Objetivo: responder cada una en <b>menos de 5 segundos</b>. Escribe y pulsa <kbd>Intro</kbd>.</p>
+
+  <section class="card" aria-label="Tipos de pregunta">
+    <div class="modes" id="modes"></div>
+    <div style="margin-top:12px" class="row">
+      <button type="button" id="sprint">⏱️ Sprint de 60 s</button>
+      <button type="button" id="reset">Reiniciar marcadores</button>
+      <span class="timer" id="timer" aria-live="off"></span>
+    </div>
+  </section>
+
+  <section class="card" aria-label="Estadísticas">
+    <div class="stats">
+      <div><b id="s-ok">0</b><small>aciertos</small></div>
+      <div><b id="s-streak">0</b><small>racha</small></div>
+      <div><b id="s-best">0</b><small>mejor racha</small></div>
+      <div><b id="s-avg">–</b><small>seg. de media</small></div>
+    </div>
+  </section>
+
+  <section class="card" id="game" aria-live="polite">
+    <div class="kind" id="kind"></div>
+    <div class="q" id="q"></div>
+    <form class="row" id="form" autocomplete="off">
+      <input type="text" id="ans" aria-label="Tu respuesta" autocapitalize="off" autocomplete="off" spellcheck="false">
+      <button class="main" type="submit">Comprobar</button>
+      <button type="button" id="skip">Saltar</button>
+    </form>
+    <div class="fb" id="fb" role="status"></div>
+    <div class="hint" id="hint"></div>
+  </section>
+
+  <footer>Parte de la guía <em>Permisos en Linux (LPIC-1)</em>. Todo se calcula en tu navegador.</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const rnd = n => Math.floor(Math.random() * n);
+  const pick = a => a[rnd(a.length)];
+
+  // ---------- utilidades de permisos ----------
+  const BITS = ['r', 'w', 'x', 'r', 'w', 'x', 'r', 'w', 'x'];
+  function letras(m) {
+    const a = [];
+    for (let i = 0; i < 9; i++) a.push((m >> (8 - i)) & 1 ? BITS[i] : '-');
+    if (m & 0o4000) a[2] = a[2] === 'x' ? 's' : 'S';
+    if (m & 0o2000) a[5] = a[5] === 'x' ? 's' : 'S';
+    if (m & 0o1000) a[8] = a[8] === 'x' ? 't' : 'T';
+    return a.join('');
+  }
+  function desdeLetras(s) {
+    s = s.trim();
+    if (s.length === 10 && /[-dlcbps]/.test(s[0])) s = s.slice(1);
+    if (!/^[-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xtT]$/.test(s)) return null;
+    let m = 0;
+    for (let i = 0; i < 9; i++) {
+      const c = s[i], b = 8 - i;
+      if ('rwx'.includes(c)) m |= 1 << b;
+      else if (c === 's' || c === 'S') { if (c === 's') m |= 1 << b; m |= i === 2 ? 0o4000 : 0o2000; }
+      else if (c === 't' || c === 'T') { if (c === 't') m |= 1 << b; m |= 0o1000; }
+    }
+    return m;
+  }
+  const o3 = m => m.toString(8).padStart(3, '0');
+  const o4 = m => m.toString(8).padStart(4, '0');
+  const trio = d => (d & 4 ? 'r' : '-') + (d & 2 ? 'w' : '-') + (d & 1 ? 'x' : '-');
+  const suma = d => [d & 4 ? '4' : '', d & 2 ? '2' : '', d & 1 ? '1' : ''].filter(Boolean).join('+') || '0';
+  const normOct = s => { s = s.trim().replace(/^0o/i, ''); return /^[0-7]{1,4}$/.test(s) ? parseInt(s, 8) : null; };
+
+  // ---------- generadores ----------
+  const COMUNES = [0o644, 0o755, 0o600, 0o700, 0o640, 0o750, 0o664, 0o775, 0o777, 0o444, 0o400, 0o660, 0o770, 0o666, 0o711, 0o751, 0o740, 0o620, 0o507, 0o305, 0o421, 0o000];
+  const rnd3 = () => Math.random() < 0.55 ? pick(COMUNES) : (rnd(8) << 6 | rnd(8) << 3 | rnd(8));
+
+  const TIPOS = {
+    l2o: { nombre: 'letras → octal', gen() {
+      const m = rnd3(), l = letras(m);
+      return { q: l, kind: 'Pasa a octal', check: s => normOct(s) === m, ans: o3(m),
+        steps: [0, 1, 2].map(i => l.slice(3 * i, 3 * i + 3) + ' = ' + suma((m >> (6 - 3 * i)) & 7) + ' = ' + ((m >> (6 - 3 * i)) & 7)).join('\n') + '\n→ ' + o3(m) };
+    } },
+    o2l: { nombre: 'octal → letras', gen() {
+      const m = rnd3();
+      return { q: o3(m), kind: 'Pasa a letras (9 caracteres)', check: s => desdeLetras(s) === m, ans: letras(m),
+        steps: [0, 1, 2].map(i => ((m >> (6 - 3 * i)) & 7) + ' = ' + suma((m >> (6 - 3 * i)) & 7) + ' → ' + trio((m >> (6 - 3 * i)) & 7)).join('\n') + '\n→ ' + letras(m) };
+    } },
+    b2o: { nombre: 'binario → octal', gen() {
+      const m = rnd3(), b = m.toString(2).padStart(9, '0');
+      return { q: b, kind: 'Pasa a octal', check: s => normOct(s) === m, ans: o3(m),
+        steps: b.slice(0, 3) + ' ' + b.slice(3, 6) + ' ' + b.slice(6) + '  →  ' + [0, 1, 2].map(i => (m >> (6 - 3 * i)) & 7).join(' · ') + '\n→ ' + o3(m) };
+    } },
+    d2o: { nombre: 'decimal → octal', gen() {
+      const m = pick([0o644, 0o755, 0o600, 0o700, 0o640, 0o750, 0o664, 0o775, 0o777, 0o444, 0o660, 0o770, 0o666, 0o751, 0o711]);
+      return { q: String(m) + ' (decimal)', kind: 'Pasa a octal (divide entre 8)', check: s => normOct(s) === m, ans: o3(m),
+        steps: m + ' ÷ 8 = ' + Math.floor(m / 8) + ' resto ' + (m % 8) + '\n' + Math.floor(m / 8) + ' ÷ 8 = ' + Math.floor(m / 64) + ' resto ' + (Math.floor(m / 8) % 8) + '\n' + Math.floor(m / 64) + '\n→ ' + o3(m) };
+    } },
+    sp: { nombre: '4 cifras ↔ letras', gen() {
+      const esp = pick([4, 2, 1, 4, 2, 1, 6, 3, 5, 7]);
+      const m = (esp << 9) | pick([0o755, 0o775, 0o777, 0o644, 0o750, 0o700, 0o730, 0o751, 0o770]);
+      const dirMode = Math.random() < 0.5;
+      if (dirMode) return { q: o4(m), kind: 'Pasa a letras (con s/S/t/T)', check: s => desdeLetras(s) === m, ans: letras(m),
+        steps: '4ª cifra ' + (m >> 9) + ' = ' + suma(m >> 9) + ' (4=SUID, 2=SGID, 1=sticky)\nletras sin especiales: ' + letras(m & 0o777) + '\n→ ' + letras(m) };
+      return { q: letras(m), kind: 'Pasa a octal de 4 cifras', check: s => normOct(s) === m, ans: o4(m),
+        steps: 's/S del dueño = 4 · s/S del grupo = 2 · t/T de otros = 1 (minúscula = hay x; mayúscula = no hay x)\n→ ' + o4(m) };
+    } },
+    um: { nombre: 'umask → permisos', gen() {
+      const u = pick([0o022, 0o002, 0o077, 0o027, 0o007, 0o037, 0o033, 0o011, 0o026, 0o222, 0o012, 0o055, 0o044]);
+      const f = 0o666 & ~u, d = 0o777 & ~u;
+      return { q: 'umask ' + o3(u), kind: 'Permisos de un fichero nuevo y de una carpeta nueva (ej.: «644 755»)',
+        check: s => { const p = s.trim().split(/[\s,;/·]+/).map(normOct); return p.length === 2 && p[0] === f && p[1] === d; },
+        ans: o3(f) + ' ' + o3(d),
+        steps: 'Carpeta: 777 & ~' + o3(u) + ' = ' + o3(d) + '\nFichero: igual pero sin x (666 & ~' + o3(u) + ') = ' + o3(f) + '\n(¡no es una resta!)' };
+    } },
+    um2: { nombre: 'permisos → umask', gen() {
+      const u = pick([0o022, 0o002, 0o077, 0o027, 0o007, 0o026, 0o222, 0o037]);
+      const d = 0o777 & ~u;
+      return { q: 'carpetas ' + o3(d), kind: '¿Qué umask? (3 cifras, la que sirve también para las carpetas)',
+        check: s => normOct(s) === u, ans: o3(u),
+        steps: 'umask = lo que se APAGA en las carpetas: 777 − ' + o3(d) + ' = ' + o3(u) };
+    } },
+    ch: { nombre: 'chmod simbólico → octal', gen() {
+      const base = pick([0o644, 0o755, 0o600, 0o640, 0o700, 0o664]);
+      const exprs = [['u+x', m => m | 0o100], ['g+w', m => m | 0o020], ['o-r', m => m & ~0o004], ['a-w', m => m & ~0o222], ['go-rwx', m => m & ~0o077],
+                     ['g+r,o-r', m => (m | 0o040) & ~0o004], ['u=rwx,g=rx,o=', () => 0o750], ['a+r', m => m | 0o444], ['g=u', m => (m & ~0o070) | ((m >> 3) & 0o070)],
+                     ['o=g', m => (m & ~0o007) | ((m >> 3) & 0o007)], ['u-w', m => m & ~0o200], ['ug+x', m => m | 0o110]];
+      const [e, fn] = pick(exprs);
+      const r = fn(base) & 0o777;
+      return { q: 'chmod ' + e + '  sobre ' + o3(base), kind: '¿Qué octal queda? (la expresión lleva siempre «quién»)', check: s => normOct(s) === r, ans: o3(r),
+        steps: o3(base) + ' = ' + letras(base) + '\n' + e + '\n→ ' + letras(r) + ' = ' + o3(r) };
+    } },
+  };
+
+  // ---------- estado ----------
+  const store = { get(k, d) { try { const v = localStorage.getItem('ent-perm-' + k); return v === null ? d : JSON.parse(v); } catch (_) { return d; } },
+                  set(k, v) { try { localStorage.setItem('ent-perm-' + k, JSON.stringify(v)); } catch (_) {} } };
+  let activos = new Set(store.get('modos', ['l2o', 'o2l', 'um']));
+  let ok = 0, tot = 0, streak = 0, best = store.get('best', 0), tiempos = [];
+  let cur = null, t0 = 0, sprint = null, resuelta = false;
+
+  Object.entries(TIPOS).forEach(([k, t]) => {
+    const l = document.createElement('label');
+    const c = document.createElement('input'); c.type = 'checkbox'; c.checked = activos.has(k);
+    c.addEventListener('change', () => { c.checked ? activos.add(k) : activos.delete(k); if (!activos.size) { activos.add(k); c.checked = true; } store.set('modos', [...activos]); });
+    l.appendChild(c); l.appendChild(document.createTextNode(' ' + t.nombre));
+    $('modes').appendChild(l);
+  });
+
+  function pintaStats() {
+    $('s-ok').textContent = ok; $('s-streak').textContent = streak; $('s-best').textContent = best;
+    $('s-avg').textContent = tiempos.length ? (tiempos.reduce((a, b) => a + b, 0) / tiempos.length).toFixed(1) : '–';
+  }
+  function nueva() {
+    cur = TIPOS[pick([...activos])].gen();
+    $('kind').textContent = cur.kind; $('q').textContent = cur.q;
+    $('ans').value = ''; $('fb').className = 'fb'; $('fb').innerHTML = ''; $('hint').textContent = '';
+    resuelta = false; t0 = performance.now(); $('ans').focus();
+  }
+  function comprobar(e) {
+    e.preventDefault();
+    if (!cur) return;
+    if (resuelta) { nueva(); return; }
+    const val = $('ans').value;
+    if (!val.trim()) return;
+    const seg = (performance.now() - t0) / 1000;
+    const fb = $('fb');
+    tot++;
+    if (cur.check(val)) {
+      ok++; streak++; tiempos.push(seg); if (streak > best) { best = streak; store.set('best', best); }
+      fb.className = 'fb ok'; fb.textContent = '✔ ¡Correcto! (' + seg.toFixed(1) + ' s)';
+      pintaStats();
+      setTimeout(nueva, 450);
+    } else {
+      streak = 0;
+      fb.className = 'fb no';
+      fb.innerHTML = '✘ Era <b></b><div class="steps"></div><div>Pulsa Intro para la siguiente.</div>';
+      fb.querySelector('b').textContent = cur.ans; fb.querySelector('.steps').textContent = cur.steps;
+      resuelta = true; pintaStats();
+    }
+  }
+  $('form').addEventListener('submit', comprobar);
+  $('skip').addEventListener('click', () => { streak = 0; pintaStats(); nueva(); });
+  $('reset').addEventListener('click', () => { ok = 0; tot = 0; streak = 0; tiempos = []; pintaStats(); nueva(); });
+
+  $('sprint').addEventListener('click', () => {
+    if (sprint) return;
+    ok = 0; tot = 0; streak = 0; tiempos = []; pintaStats(); nueva();
+    let resto = 60; $('timer').textContent = '⏱️ ' + resto + ' s';
+    sprint = setInterval(() => {
+      resto--; $('timer').textContent = '⏱️ ' + resto + ' s';
+      if (resto <= 0) {
+        clearInterval(sprint); sprint = null; $('timer').textContent = '';
+        const best60 = Math.max(store.get('sprint', 0), ok); store.set('sprint', best60);
+        $('game').innerHTML = '<div class="final"><b>' + ok + ' aciertos en 60 s</b>' + (tot ? Math.round(100 * ok / tot) + ' % de acierto · ' : '') + 'tu mejor sprint: ' + best60 + '<br><br><button class="main" type="button" onclick="location.reload()">Otra vez</button></div>';
+      }
+    }, 1000);
+  });
+
+  $('theme').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+
+  pintaStats(); nueva();
+  window.__ent = { TIPOS, letras, desdeLetras };   // para pruebas
+})();
+</script>
+</body>
+</html>

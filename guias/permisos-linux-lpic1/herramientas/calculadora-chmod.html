@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de permisos de Linux</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6879; --line: #d9dee6;
+    --accent: #2563eb; --accent-ink: #ffffff; --ok: #15803d; --warn: #b45309;
+    --on: #dbeafe; --on-line: #93c5fd; --special: #fef3c7; --special-line: #fcd34d;
+    --code-bg: #0f172a; --code-ink: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1116; --panel: #161b22; --ink: #e6edf3; --muted: #9aa7b6; --line: #2d3540;
+      --accent: #5b9cff; --accent-ink: #0b1220; --ok: #4ade80; --warn: #fbbf24;
+      --on: #1e3a5f; --on-line: #3b6db5; --special: #3b2f0b; --special-line: #8a6d12;
+      --code-bg: #0b0f14; --code-ink: #dbe4ee;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1116; --panel: #161b22; --ink: #e6edf3; --muted: #9aa7b6; --line: #2d3540;
+    --accent: #5b9cff; --accent-ink: #0b1220; --ok: #4ade80; --warn: #fbbf24;
+    --on: #1e3a5f; --on-line: #3b6db5; --special: #3b2f0b; --special-line: #8a6d12;
+    --code-bg: #0b0f14; --code-ink: #dbe4ee;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 20px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 820px) { .grid { grid-template-columns: 1.1fr 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card h2 { font-size: 1rem; margin: 0 0 12px; }
+  table.perm { width: 100%; border-collapse: separate; border-spacing: 6px; text-align: center; }
+  table.perm th { font-weight: 600; color: var(--muted); font-size: .85rem; }
+  table.perm th.row { text-align: left; color: var(--ink); white-space: nowrap; }
+  .cell { display: block; }
+  .cell input { position: absolute; opacity: 0; pointer-events: none; }
+  .cell span { display: grid; place-items: center; height: 52px; border: 1.5px solid var(--line);
+               border-radius: 10px; cursor: pointer; font: 600 1.15rem ui-monospace, monospace;
+               user-select: none; background: var(--panel); color: var(--muted); }
+  .cell { position: relative; }
+  .cell input:checked + span { background: var(--on); border-color: var(--on-line); color: var(--ink); }
+  .cell input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .cell.sp input:checked + span { background: var(--special); border-color: var(--special-line); }
+  .digit { font: 700 1.3rem ui-monospace, monospace; color: var(--accent); }
+  .row-flex { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg label { padding: 6px 12px; cursor: pointer; font-size: .9rem; color: var(--muted); }
+  .seg input { position: absolute; opacity: 0; }
+  .seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+  .seg label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: -3px; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+           border-radius: 8px; padding: 6px 12px; }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible, input[type=text]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .presets button { font: 600 .9rem ui-monospace, monospace; padding: 4px 10px; }
+  label.f { display: block; font-size: .8rem; color: var(--muted); margin: 10px 0 2px; }
+  input[type=text] { width: 100%; font: 1.05rem ui-monospace, monospace; padding: 8px 10px; border-radius: 8px;
+                     border: 1.5px solid var(--line); background: var(--panel); color: var(--ink); }
+  input[type=text].bad { border-color: #dc2626; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .explain { margin: 0; padding-left: 18px; }
+  .explain li { margin: 4px 0; }
+  .explain b { font-family: ui-monospace, monospace; }
+  pre.cmd { background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 10px 12px; margin: 6px 0;
+            overflow-x: auto; font: .95rem ui-monospace, monospace; display: flex; justify-content: space-between; gap: 8px; }
+  pre.cmd code { white-space: pre; }
+  pre.cmd button { font-size: .75rem; padding: 2px 8px; align-self: flex-start; }
+  .warn { color: var(--warn); font-size: .9rem; margin: 6px 0 0; }
+  .ok { color: var(--ok); }
+  .big { font: 700 2.2rem ui-monospace, monospace; letter-spacing: .05em; }
+  .lsline { font: 1.1rem ui-monospace, monospace; word-break: break-all; }
+  details summary { cursor: pointer; font-weight: 600; }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 24px; }
+  .theme { float: right; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="theme" id="theme" type="button" aria-label="Cambiar tema claro/oscuro">🌓</button>
+  <h1>🔐 Calculadora de permisos de Linux</h1>
+  <p class="sub">Marca casillas o escribe en cualquier campo: <b>octal</b>, <b>letras</b> (<code>ls -l</code>), <b>binario</b> o <b>decimal</b>. Todo se sincroniza.</p>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="h-casillas">
+      <h2 id="h-casillas">1 · Marca los permisos</h2>
+      <div class="row-flex">
+        <span class="seg" role="radiogroup" aria-label="Tipo de objeto">
+          <label><input type="radio" name="tipo" value="file" checked> Fichero</label>
+          <label><input type="radio" name="tipo" value="dir"> Carpeta</label>
+        </span>
+      </div>
+      <table class="perm" id="tabla">
+        <thead><tr><th></th><th>Leer<br><small>r · 4</small></th><th>Escribir<br><small>w · 2</small></th><th>Ejecutar<br><small>x · 1</small></th><th>Cifra</th></tr></thead>
+        <tbody>
+          <tr><th class="row">Dueño <small>(u)</small></th>
+            <td><label class="cell"><input type="checkbox" data-bit="8" aria-label="Dueño leer"><span>r</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="7" aria-label="Dueño escribir"><span>w</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="6" aria-label="Dueño ejecutar"><span>x</span></label></td>
+            <td class="digit" id="d-u">0</td></tr>
+          <tr><th class="row">Grupo <small>(g)</small></th>
+            <td><label class="cell"><input type="checkbox" data-bit="5" aria-label="Grupo leer"><span>r</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="4" aria-label="Grupo escribir"><span>w</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="3" aria-label="Grupo ejecutar"><span>x</span></label></td>
+            <td class="digit" id="d-g">0</td></tr>
+          <tr><th class="row">Otros <small>(o)</small></th>
+            <td><label class="cell"><input type="checkbox" data-bit="2" aria-label="Otros leer"><span>r</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="1" aria-label="Otros escribir"><span>w</span></label></td>
+            <td><label class="cell"><input type="checkbox" data-bit="0" aria-label="Otros ejecutar"><span>x</span></label></td>
+            <td class="digit" id="d-o">0</td></tr>
+          <tr><th class="row">Especiales</th>
+            <td><label class="cell sp"><input type="checkbox" data-bit="11" aria-label="SUID"><span title="SUID · 4">SUID</span></label></td>
+            <td><label class="cell sp"><input type="checkbox" data-bit="10" aria-label="SGID"><span title="SGID · 2">SGID</span></label></td>
+            <td><label class="cell sp"><input type="checkbox" data-bit="9" aria-label="Sticky"><span title="Sticky · 1">Sticky</span></label></td>
+            <td class="digit" id="d-s">0</td></tr>
+        </tbody>
+      </table>
+      <p class="sub" style="margin:10px 0 6px">Atajos:</p>
+      <div class="presets row-flex" id="presets"></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-valores">
+      <h2 id="h-valores">2 · Valores equivalentes</h2>
+      <div class="big" id="big" aria-live="polite">644</div>
+      <div class="lsline" id="lsline"></div>
+      <div class="two">
+        <div><label class="f" for="in-oct">Octal</label><input type="text" id="in-oct" inputmode="numeric" autocomplete="off" spellcheck="false"></div>
+        <div><label class="f" for="in-let">Letras (rwxr-xr-x)</label><input type="text" id="in-let" autocomplete="off" spellcheck="false"></div>
+        <div><label class="f" for="in-bin">Binario</label><input type="text" id="in-bin" autocomplete="off" spellcheck="false"></div>
+        <div><label class="f" for="in-dec">Decimal (valor entero)</label><input type="text" id="in-dec" inputmode="numeric" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <div class="warn" id="msg" role="status"></div>
+    </section>
+
+    <section class="card" aria-labelledby="h-expl">
+      <h2 id="h-expl">3 · Qué significa</h2>
+      <ul class="explain" id="explain"></ul>
+    </section>
+
+    <section class="card" aria-labelledby="h-cmd">
+      <h2 id="h-cmd">4 · Órdenes</h2>
+      <pre class="cmd"><code id="cmd-oct"></code><button type="button" data-copy="cmd-oct">Copiar</button></pre>
+      <pre class="cmd"><code id="cmd-sym"></code><button type="button" data-copy="cmd-sym">Copiar</button></pre>
+      <p class="sub" style="margin:8px 0 0">Sustituye <code>FICHERO</code> por el nombre. Con carpetas y <code>-R</code>, mejor <code>chmod -R u=rwX,go=rX</code> (la <code>X</code> solo da ejecución a carpetas y a ficheros que ya la tuvieran).</p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:16px" aria-labelledby="h-umask">
+    <h2 id="h-umask">5 · Calculadora de <code>umask</code></h2>
+    <div class="two">
+      <div><label class="f" for="in-um">umask (octal)</label><input type="text" id="in-um" value="0022" inputmode="numeric" autocomplete="off" spellcheck="false"></div>
+      <div id="um-out" aria-live="polite"></div>
+    </div>
+    <details style="margin-top:10px"><summary>Hacia atrás: quiero que mis carpetas nuevas sean…</summary>
+      <div class="row-flex" style="margin-top:8px">
+        <label for="in-um-dir">carpetas</label><input type="text" id="in-um-dir" value="755" style="width:90px" inputmode="numeric" autocomplete="off">
+        <span id="um-back"></span>
+      </div>
+    </details>
+  </section>
+
+  <footer>Parte de la guía <em>Permisos en Linux (LPIC-1)</em>. Todo se calcula en tu navegador; no se envía nada a ningún sitio.</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const BITS = { 8: 'r', 7: 'w', 6: 'x', 5: 'r', 4: 'w', 3: 'x', 2: 'r', 1: 'w', 0: 'x' };
+  const boxes = Array.from(document.querySelectorAll('input[type=checkbox][data-bit]'));
+  const $ = id => document.getElementById(id);
+  let mode = 0o644;
+  let isDir = false;
+
+  const octStr = m => (m & 0o7000) ? m.toString(8).padStart(4, '0') : m.toString(8).padStart(3, '0');
+
+  function letras(m) {
+    let s = '';
+    for (let b = 8; b >= 0; b--) s += (m >> b) & 1 ? BITS[b] : '-';
+    const a = s.split('');
+    if (m & 0o4000) a[2] = a[2] === 'x' ? 's' : 'S';
+    if (m & 0o2000) a[5] = a[5] === 'x' ? 's' : 'S';
+    if (m & 0o1000) a[8] = a[8] === 'x' ? 't' : 'T';
+    return a.join('');
+  }
+
+  function desdeLetras(s) {
+    s = s.trim();
+    if (s.length === 10 && /[-dlcbps]/.test(s[0])) s = s.slice(1);
+    if (!/^[-r][-w][-xsS][-r][-w][-xsS][-r][-w][-xtT]$/.test(s)) return null;
+    let m = 0;
+    for (let i = 0; i < 9; i++) {
+      const c = s[i], bit = 8 - i;
+      if ('rwx'.includes(c)) m |= 1 << bit;
+      else if (c === 's' || c === 'S') { if (c === 's') m |= 1 << bit; m |= i === 2 ? 0o4000 : 0o2000; }
+      else if (c === 't' || c === 'T') { if (c === 't') m |= 1 << bit; m |= 0o1000; }
+    }
+    return m;
+  }
+
+  function acciones(d) {
+    const r = d & 4, w = d & 2, x = d & 1, t = [];
+    if (isDir) { if (r) t.push('listar'); if (w) t.push('crear/borrar/renombrar dentro'); if (x) t.push('entrar'); }
+    else { if (r) t.push('leer'); if (w) t.push('escribir'); if (x) t.push('ejecutar'); }
+    return t.length ? t.join(', ') : '<b>nada</b>';
+  }
+
+  function simbolico(m) {
+    const n = ['u', 'g', 'o'];
+    const p = [0, 1, 2].map(i => {
+      const d = (m >> (6 - 3 * i)) & 7;
+      return n[i] + '=' + (d & 4 ? 'r' : '') + (d & 2 ? 'w' : '') + (d & 1 ? 'x' : '');
+    });
+    let s = p.join(',');
+    if (m & 0o4000) s += ',u+s';
+    if (m & 0o2000) s += ',g+s';
+    if (m & 0o1000) s += ',+t';
+    return s;
+  }
+
+  function render(origen) {
+    const m = mode & 0o7777;
+    boxes.forEach(b => { b.checked = !!(m >> Number(b.dataset.bit) & 1); });
+    $('d-u').textContent = (m >> 6) & 7;
+    $('d-g').textContent = (m >> 3) & 7;
+    $('d-o').textContent = m & 7;
+    $('d-s').textContent = (m >> 9) & 7;
+    const o = octStr(m), l = letras(m);
+    $('big').textContent = o;
+    $('lsline').textContent = (isDir ? 'd' : '-') + l;
+    if (origen !== 'oct') $('in-oct').value = o;
+    if (origen !== 'let') $('in-let').value = l;
+    if (origen !== 'bin') $('in-bin').value = ((m & 0o7000) ? m.toString(2).padStart(12, '0') : m.toString(2).padStart(9, '0')).replace(/(\d{3})(?=\d)/g, '$1 ');
+    if (origen !== 'dec') $('in-dec').value = String(m);
+    ['in-oct', 'in-let', 'in-bin', 'in-dec'].forEach(id => $(id).classList.remove('bad'));
+    $('msg').textContent = '';
+
+    const e = [];
+    e.push('<b>Dueño</b> (' + l.slice(0, 3) + '): ' + acciones((m >> 6) & 7));
+    e.push('<b>Grupo</b> (' + l.slice(3, 6) + '): ' + acciones((m >> 3) & 7));
+    e.push('<b>Otros</b> (' + l.slice(6, 9) + '): ' + acciones(m & 7));
+    if (m & 0o4000) e.push('<b>SUID</b>: ' + (isDir ? 'sin efecto en Linux sobre carpetas.' : 'se ejecuta con los privilegios del <b>dueño</b>.' + (/S/.test(l[2]) ? ' (¡La S mayúscula indica que falta la x del dueño!)' : '') + ' <i>Ignorado en scripts.</i>'));
+    if (m & 0o2000) e.push('<b>SGID</b>: ' + (isDir ? 'lo que se cree dentro hereda el <b>grupo</b> de la carpeta.' : 'se ejecuta con los privilegios del <b>grupo</b>.'));
+    if (m & 0o1000) e.push('<b>Sticky</b>: ' + (isDir ? 'solo el dueño de cada fichero (o de la carpeta, o root) puede borrarlo o renombrarlo.' : 'sin efecto en ficheros normales en Linux.'));
+    if (!isDir && ((m >> 6) & 1) && !((m >> 6) & 4)) e.push('<span class="warn">⚠ Un script con <b>x</b> pero sin <b>r</b> no se puede ejecutar (el intérprete necesita leerlo).</span>');
+    if (isDir && ((m >> 6) & 2) && !((m >> 6) & 1)) e.push('<span class="warn">⚠ Carpeta con <b>w</b> pero sin <b>x</b> para el dueño: no sirve para crear nada.</span>');
+    if (m & 2 && !isDir && !(m & 0o1000)) e.push('<span class="warn">⚠ Escribible por <b>todo el mundo</b>.</span>');
+    $('explain').innerHTML = e.map(x => '<li>' + x + '</li>').join('');
+
+    $('cmd-oct').textContent = 'chmod ' + o + ' FICHERO';
+    $('cmd-sym').textContent = 'chmod ' + simbolico(m) + ' FICHERO';
+  }
+
+  // --- eventos ---
+  boxes.forEach(b => b.addEventListener('change', () => {
+    mode = boxes.reduce((acc, x) => acc | (x.checked ? 1 << Number(x.dataset.bit) : 0), 0);
+    render();
+  }));
+  document.querySelectorAll('input[name=tipo]').forEach(r => r.addEventListener('change', () => {
+    isDir = document.querySelector('input[name=tipo]:checked').value === 'dir';
+    render();
+  }));
+
+  function entrada(id, parse, origen) {
+    $(id).addEventListener('input', () => {
+      const v = parse($(id).value);
+      if (v === null || v < 0 || v > 0o7777) { $(id).classList.add('bad'); $('msg').textContent = 'Valor no válido en ese campo.'; return; }
+      mode = v; render(origen);
+    });
+  }
+  entrada('in-oct', s => /^[0-7]{1,4}$/.test(s.trim()) ? parseInt(s.trim(), 8) : null, 'oct');
+  entrada('in-let', s => desdeLetras(s), 'let');
+  entrada('in-bin', s => { s = s.replace(/\s+/g, ''); return /^[01]{1,12}$/.test(s) ? parseInt(s, 2) : null; }, 'bin');
+  entrada('in-dec', s => /^\d{1,4}$/.test(s.trim()) ? parseInt(s.trim(), 10) : null, 'dec');
+
+  const presets = [['644', 'documentos'], ['755', 'programas y carpetas'], ['600', 'privado'], ['700', 'carpeta privada'], ['640', 'dueño edita, grupo lee'],
+                  ['664', 'equipo (Ubuntu)'], ['775', 'carpeta de equipo'], ['777', '¡evitar!'], ['4755', 'SUID'], ['2775', 'SGID carpeta'], ['1777', '/tmp']];
+  presets.forEach(([o, t]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = o; b.title = t;
+    b.addEventListener('click', () => { mode = parseInt(o, 8); render(); });
+    $('presets').appendChild(b);
+  });
+
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async () => {
+    const t = $(b.dataset.copy).textContent;
+    try { await navigator.clipboard.writeText(t); b.textContent = '¡Copiado!'; }
+    catch (_) { const r = document.createRange(); r.selectNodeContents($(b.dataset.copy)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Seleccionado'; }
+    setTimeout(() => b.textContent = 'Copiar', 1400);
+  }));
+
+  // --- umask ---
+  function umaskOut() {
+    const raw = $('in-um').value.trim();
+    if (!/^[0-7]{1,4}$/.test(raw)) { $('in-um').classList.add('bad'); $('um-out').innerHTML = '<span class="warn">Escribe de 1 a 4 cifras octales.</span>'; return; }
+    $('in-um').classList.remove('bad');
+    const u = parseInt(raw, 8) & 0o777;
+    const f = 0o666 & ~u, d = 0o777 & ~u;
+    const o3 = m => m.toString(8).padStart(3, '0');
+    const naive = [6, 6, 6].map((v, i) => Math.max(0, v - ((u >> (6 - 3 * i)) & 7))).join('');
+    let h = 'Ficheros nuevos: <b>' + o3(f) + '</b> <code>' + letras(f) + '</code><br>Carpetas nuevas: <b>' + o3(d) + '</b> <code>' + letras(d) + '</code>';
+    if (naive !== o3(f)) h += '<div class="warn">⚠ Restar «de cabeza» daría ' + naive + ', pero lo real es ' + o3(f) + ': la umask es una máscara (&amp; ~umask), no una resta.</div>';
+    $('um-out').innerHTML = h;
+  }
+  $('in-um').addEventListener('input', umaskOut);
+  $('in-um-dir').addEventListener('input', () => {
+    const v = $('in-um-dir').value.trim();
+    if (!/^[0-7]{3}$/.test(v)) { $('um-back').textContent = 'Escribe 3 cifras octales.'; return; }
+    const d = parseInt(v, 8), u = 0o777 & ~d;
+    $('um-back').innerHTML = '→ <b>umask ' + u.toString(8).padStart(4, '0') + '</b> (ficheros: ' + (0o666 & ~u).toString(8).padStart(3, '0') + ')';
+  });
+
+  // --- tema ---
+  $('theme').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+
+  render(); umaskOut(); $('in-um-dir').dispatchEvent(new Event('input'));
+  window.__calc = { letras, desdeLetras, simbolico, octStr };   // para pruebas
+})();
+</script>
+</body>
+</html>
