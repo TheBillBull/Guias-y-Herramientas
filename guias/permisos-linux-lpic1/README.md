@@ -2,6 +2,8 @@
 
 > Una guía **paso a paso, como para un niño que ve `ls -l` por primera vez**, que termina con ejercicios de nivel experto. **188 ejercicios, series y retos** (más un mini-examen de **30 preguntas** tipo LPIC-1), con la **salida real** de cada comando, un **laboratorio** que se monta con un script y **cuatro herramientas** para convertir y diagnosticar permisos.
 
+> 📄 **También en PDF** (para imprimir o compartir): [guía completa (152 págs.)](pdf/Guia-Permisos-Linux-LPIC1.pdf) · [manual del laboratorio (14 págs.)](pdf/Laboratorio-Permisos-LPIC1.pdf) · [chuleta (2 págs.)](pdf/Chuleta-Permisos-Linux.pdf)
+
 Nació de una captura de pantalla como esta (`ls -l saludos.sh`, `ls -l /etc/shadow`, `ls -ld /tmp/`, `ls -ld /var/spool/cron/crontabs/`…) y de una pregunta: *«quiero entender `-rwxrwxr-x` nada más verlo, y entender qué es `777` o `4755`»*. Al terminar, lo harás.
 
 ```text
@@ -161,6 +163,7 @@ guias/permisos-linux-lpic1/
 ├── README.md                    ← este índice
 ├── 00-…14-*.md                  ← los 15 capítulos
 ├── chuleta.md                   ← resumen de una página
+├── pdf/                         ← la guía, el manual del laboratorio y la chuleta en PDF
 ├── laboratorio/
 │   └── preparar-laboratorio.sh  ← crea ~/lab-permisos, usuarios y grupos (y --limpiar)
 └── herramientas/
